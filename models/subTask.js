@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
 
-const TaskSchema = new mongoose.Schema({
-    user: {
+const SubTaskSchema = new mongoose.Schema({
+    task: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
-        required: [true, 'Please provide user'],
+        ref: "task",
+        required: [true, 'Please provide task'],
     },
     title: {
         type: String,
@@ -26,12 +26,6 @@ const TaskSchema = new mongoose.Schema({
     dataTime: {
         type: Date,
         required: [true, 'Please provide date'],
-    },
-    category: {
-        type: String,
-        required: [true, 'Please provide category'],
-        enum: ["Work", "Family", "Education", "Shopping", "Others"],
-        default: "Others",
     },
     priority: {
         type: Number,
@@ -56,4 +50,4 @@ const TaskSchema = new mongoose.Schema({
 )
 
 // Export model
-module.exports = mongoose.model('Task', TaskSchema)
+module.exports = mongoose.model('SubTask', SubTaskSchema)

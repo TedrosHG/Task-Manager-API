@@ -1,6 +1,7 @@
 // import library
 require('dotenv').config()
 const express = require('express')
+const cors = require('cors')
 
 
 // import files from other folders
@@ -14,6 +15,7 @@ const app = express()
 
 // middleware to use request from body or url
 app.use(express.json());
+app.use(cors());
 
 // Routes
 app.use('/api/taskManager/tasks', auth, taskRouter);
