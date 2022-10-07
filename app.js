@@ -1,20 +1,35 @@
+// import library
 require('dotenv').config()
 const express = require('express')
+
+
+// import files from other folders
+const userRouter = require('./routes/users')
+const taskRouter = require('./routes/tasks')
+const connectDB = require('./db/connect')
+const auth = require('./middleware/authentication')
+
+// call express function
 const app = express()
 
+// middleware to use request from body or url
 app.use(express.json());
+
+// Routes
+app.use('/api/taskManager/tasks', auth, taskRouter);
+app.use('/api/taskManager/auth', userRouter);
 
 app.get('/', (req, res) => {
     res.send('welcome to task manager API')
 })
 
-//Assign port from .env or default 5000
-const port = process.env.PORT || 5000
+//Assign port from .env or default 3000
+const port = process.env.PORT || 3000
 
 
 const start = async () => {
     try {
-
+        await connectDB(process.env.MONGO_URL);
         app.listen(port, () => {
             console.log(`Server is listening on port ${port}...`)
         });
