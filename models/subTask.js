@@ -11,39 +11,39 @@ const SubTaskSchema = new mongoose.Schema({
         required: [true, 'Please provide title'],
         maxlength: 50,
         minlength: 3,
+        trim: true
     },
     note: {
         type: String,
+        trim: true,
     },
-    dataTime: {
+    dateTime: {
         type: Date,
         required: [true, 'Please provide date'],
     },
     duration: {
-        type: Number,
-        required: [true, 'Please provide date'],
-    },
-    dataTime: {
-        type: Date,
-        required: [true, 'Please provide date'],
+        type: String,
+        required: true,
+        enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"],
+        default: "30 mins",
     },
     priority: {
         type: Number,
-        required: [true, 'Please provide priority'],
+        required: true,
         enum: [1, 2, 3, 4, 5],
         default: 1,
     },
     reminder: {
         type: String,
-        required: [true, 'Please provide reminder'],
-        enum: ["15mins", "30mins", "1hrs", "2hrs", "6hrs", "24hrs"],
-        default: "30mins",
+        required: true,
+        enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"],
+        default: "30 mins",
     },
     status: {
         type: String,
-        required: [true, 'Please provide status'],
-        enum: ["In progress", "Stuck", "Canceled", "Done", "Others"],
-        default: "In progress",
+        required: true,
+        enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"],
+        default: "Upcoming",
     },
 },
 { timestamps: true }
