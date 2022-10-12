@@ -21,6 +21,7 @@ const UserSchema = new mongoose.Schema({
     },
     verificationCode:{
         type: String,
+        //createdAt: { type: Date, expires: 60, default: Date.now },
     }
 
 })
@@ -49,8 +50,16 @@ UserSchema.methods.comparePassword = async function(newPassword) {
 UserSchema.methods.createVerificationCode = function(code) {
     return jwt.sign(
         { code: code, },
-        process.env.JWT_SECRET,
-        { expiresIn: process.env.JWT_LIFETIME, }
+        process.env.VERIFICATION_CODE_SECRET,
+        { expiresIn: 3600, }
+    )
+}
+
+UserSchema.methods.createforgotPasswordToken = function() {
+    return jwt.sign(
+        {  },
+        process.env.FORGOT_PASSWORD_SECRET,
+        { expiresIn: 3600, }
     )
 }
 

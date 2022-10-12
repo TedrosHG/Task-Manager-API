@@ -8,6 +8,7 @@ var createError = require('http-errors');
 // import files from other folders
 const userRouter = require('./routes/users')
 const taskRouter = require('./routes/tasks')
+const subTaskRouter = require('./routes/subTasks')
 const connectDB = require('./db/connect')
 const auth = require('./middleware/authentication')
 
@@ -20,6 +21,7 @@ app.use(cors());
 
 // Routes
 app.use('/api/taskManager/tasks', auth, taskRouter);
+app.use('/api/taskManager/subTasks', auth, subTaskRouter);
 app.use('/api/taskManager/auth', userRouter);
 
 app.get('/', (req, res) => {
@@ -29,7 +31,7 @@ app.get('/', (req, res) => {
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
     //res.status(404).json({err:"Not found"})
-    const err = new Error('Not found')
+    const err = new Error('Not found.')
     err.status = 404
     next(err)
   });

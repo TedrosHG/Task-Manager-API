@@ -6,9 +6,9 @@ const router = express.Router()
 
 router.post('/register', register)
 router.post('/login', login)
-router.post('/sendEmail', sendEmail)
-router.post('/checkCode/:id', checkCode)
-router.patch('/updatePassword/:id', updatePassword)
+router.post('/forgetPassword', sendEmail)
+router.post('/verifyCode/', checkCode)
+router.patch('/newPassword/', updatePassword)
 
 
 module.exports = router

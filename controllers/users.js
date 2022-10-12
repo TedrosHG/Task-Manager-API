@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
 const register = async (req, res) => {
-    // create user    
-    console.log(Math.floor(1000 + Math.random() * 9000))
+    // create user 
     await User.create({ ...req.body})
     .then((result) => {
         // create JWT token
@@ -41,7 +40,7 @@ const login = async (req, res) => {
     // check user with this email
     const user = await User.findOne({email}).catch((err) => {
         console.log(err.message)
-        res.json({err:err.message})
+        res.status(400).json({err:err.message})
     })
     if(!user){
         console.log( `Invalid Credentials(email)`)
@@ -67,10 +66,13 @@ const login = async (req, res) => {
 
 const sendEmail = async(req, res) => {
     const { email } = req.body
+    if(!email){
+        res.status(400).json({err:'Email is required'})
+    }
     // check user with this email
     const user = await User.findOne({ email }).catch((err) => {
         console.log(err.message)
-        res.json({err:err.message})
+        res.status(400).json({err:err.message})
     })
     if(!user){
         console.log( `there is no user with this email`)
@@ -93,7 +95,7 @@ const sendEmail = async(req, res) => {
     subject: 'Reset password for todo app',
     text:  `Reset password for todo app
     The code is : ${code}
-    The code will expire in 1 day.`
+    The code will expire in 1 hour.`
   };
   
   transporter.sendMail(mailOptions, async function(error, info){
@@ -104,11 +106,10 @@ const sendEmail = async(req, res) => {
       await User.findByIdAndUpdate(user._id,{verificationCode:vCode})
       .catch((err) => {
         console.log(err.message)
-        res.json({err:err.message})
+        res.status(400).json({err:err.message})
             })
       console.log('Email sent: ' + info.response);
       res.json({
-        userId:user._id,
         message:"Email send successfully"
     })
     }
@@ -117,36 +118,50 @@ const sendEmail = async(req, res) => {
 }
 
 const checkCode = async(req, res) => {
-    const {  code } = req.body
-    const user = await User.findById(req.params.id).catch((err) => {
+    const {  email, code } = req.body
+    if(code.length != 4){
+        res.status(400).json({err:'code must be 4 characters'})
+    }
+    const user = await User.findOne({email}).catch((err) => {
         console.log(err.message)
-        res.json({err:err.message})
+        res.status(400).json({err:err.message})
     })
     if(!user){
         console.log( `there is no user with this email`)
         return res.status(400).json({err: `there is no user with this email`})
     }
-    const payload = jwt.verify(user.verificationCode, process.env.JWT_SECRET)
+    try{
+    const payload = jwt.verify(user.verificationCode, process.env.VERIFICATION_CODE_SECRET)
     if(payload.code == code){
+        const forgotToken = user.createforgotPasswordToken()
         res.json({
-            userId:user._id,
-            message:"code matched"
+            message:"code matched",
+            token:forgotToken,
         })
     }else{
-        res.json({
+        res.status(400).json({
             err:"wrong code, try again."
         })
     }
+    }catch(err) {
+        res.status(400).json({err:err.message})
+    }
+    
+    
 }
 
 const updatePassword = async(req, res) => {
-    const { password } = req.body
-    const salt = await bcrypt.genSalt(10)
-    //console.log(this.password.trim())
+    const { email, password } = req.body
+    if(password.length < 8){
+        res.status(400).json({err:'password must be 8 or more characters'})
+    }
+    try {
+        jwt.verify(req.body.token, process.env.FORGOT_PASSWORD_SECRET)
+        const salt = await bcrypt.genSalt(10)
     const hashedPassword = await bcrypt.hash(password, salt) 
-    const user = await User.findByIdAndUpdate(req.params.id, {password:hashedPassword}).catch((err) => {
+    const user = await User.findOneAndUpdate({email}, {password:hashedPassword}).catch((err) => {
         console.log(err.message)
-        res.json({err:err.message})
+        res.status(400).json({err:err.message})
     })
     if(!user){
         console.log( `there is no user with this email`)
@@ -155,6 +170,10 @@ const updatePassword = async(req, res) => {
     res.json({
         message:"password changed successfully"
     })
+    } catch (err) {
+        res.status(400).json({err:err.message})
+    }
+    
 }
  
 
