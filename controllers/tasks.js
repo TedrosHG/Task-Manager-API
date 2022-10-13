@@ -3,13 +3,11 @@ const SubTask = require('../models/subTask')
 
 
 const getAllTasks = async (req, res) => {
-
+    console.log(req.user.userId)
     await Task.find({ user: req.user.userId })
         .then(async (results) => {
-            if (!results) {
-                return res.status(400).json({ err: "there is no task" })
-            }
             let tasks = [];
+            let subtasks = [];
             //check if there is subTask and adding them to their tasks as subTask
             for (let result in results) {
                 let task = {};
@@ -32,16 +30,17 @@ const getAllTasks = async (req, res) => {
                     task.status = results[result].status
                     task.subTask = values
 
-
+                    subtasks.push(values)
                 }).catch((errors) => {
-                    return res.status(400).json({ err: errors })
+                    return res.status(400).json({ errs: errors })
                 })
                 tasks.push(task)
+                
             }
-            res.json({ tasks })
+            res.status(200).json({ tasks })
         })
         .catch((err) => {
-            res.status(400).json({ err })
+            res.status(400).json({ errss:err })
         })
 
 }
@@ -50,37 +49,19 @@ const getTask = async (req, res) => {
     await Task.findOne({ user: req.user.userId, _id: req.params.id })
         .then(async (results) => {
             if (!results) {
-                return res.status(400).json({ err: "there is no task with this id" })
+                return res.status(404).json({ err: "there is no task with this id" })
             }
 
             //check if there is subTask and adding them to their tasks as subTask
             let task = {};
             
             await SubTask.find({ task: results._id }).then((values) => {
-                //task=results[result]
-                //results[result].subTasks.push(values)
-                //results[result].subTasks=values
-                //results[result].push({"subTasks":values})
-
-                task._id = results._id
-                task.user = results.user
-                task.title = results.title
-                task.note = results.note
-                task.dateTime = results.dateTime
-                task.duration = results.duration
-                task.category = results.category
-                task.priority = results.priority
-                task.reminder = results.reminder
-                task.status = results.status
-                task.subTask = values
-
+            
+                res.status(200).json({ task: results, subTasks:values })
 
             }).catch((errors) => {
                 return res.status(400).json({ err: errors })
             })
-
-
-            res.json({ task })
         })
         .catch((err) => {
             res.status(400).json({ err })
@@ -106,10 +87,10 @@ const updateTaskStatus = async (req, res) => {
     })
     if (!task) {
         console.log(`there is no task with this id`)
-        return res.status(400).json({ err: `there is no task with this id` })
+        return res.status(404).json({ err: `there is no task with this id` })
     }
     res.json({
-        message: "status changed successfully"
+        msg: "status changed successfully"
     })
 
 
@@ -122,7 +103,7 @@ const deleteTask = async (req, res) => {
     })
     if (!task) {
         console.log(`there is no task with this id`)
-        return res.status(400).json({ err: `there is no task with this id` })
+        return res.status(404).json({ err: `there is no task with this id` })
     }
     const results = await SubTask.deleteMany({ task: task._id })
         .catch((err) => {
@@ -134,7 +115,7 @@ const deleteTask = async (req, res) => {
     }
     console.log('there is task')
     await task.remove().then((result) => {
-        res.json({ message: `task${msg} deleted successfully` })
+        res.status(200).json({ msg: `task${msg} deleted successfully` })
     }).catch((error) => {
         res.status(500).json({ err: error.message })
     })
@@ -156,7 +137,7 @@ const editTask = async (req, res) => {
 const updateTask = async (req, res) => {
     await Task.findByIdAndUpdate(req.params.id,{ user: req.user.userId, ...req.body })
         .then((results) => {
-            res.status(201).json({ message: "Task has been successfully updated." })
+            res.status(201).json({ msg: "Task has been successfully updated." })
         })
         .catch((err) => {
             res.status(400).json({ err: err.errors })

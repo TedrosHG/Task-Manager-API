@@ -3,6 +3,8 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 var createError = require('http-errors');
+const swaggerUI = require("swagger-ui-express")
+const swaggerJsDoc = require('swagger-jsdoc') 
 
 
 // import files from other folders
@@ -12,12 +14,34 @@ const subTaskRouter = require('./routes/subTasks')
 const connectDB = require('./db/connect')
 const auth = require('./middleware/authentication')
 
+// swagger
+const options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Todo App",
+            version: "1.0.0",
+            description: "A Todo task App API"
+        },
+        servers: [
+            {
+                url: "http://localhost:5000/api/taskManager"
+            }
+        ],        
+    },
+    apis: ["./routes/*.js"]
+}
+
+const specs = swaggerJsDoc(options)
+
 // call express function
 const app = express()
+
 
 // middleware to use request from body or url
 app.use(express.json());
 app.use(cors());
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
 
 // Routes
 app.use('/api/taskManager/tasks', auth, taskRouter);

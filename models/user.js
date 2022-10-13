@@ -19,9 +19,9 @@ const UserSchema = new mongoose.Schema({
         required: [true, 'Please provide password'],
         minlength: 8,
     },
-    verificationCode:{
+    otp:{
         type: String,
-        //createdAt: { type: Date, expires: 60, default: Date.now },
+        
     }
 
 })
@@ -49,8 +49,8 @@ UserSchema.methods.comparePassword = async function(newPassword) {
 
 UserSchema.methods.createVerificationCode = function(code) {
     return jwt.sign(
-        { code: code, },
-        process.env.VERIFICATION_CODE_SECRET,
+        { otp: code, },
+        process.env.OTP_SECRET,
         { expiresIn: 3600, }
     )
 }

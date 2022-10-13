@@ -4,13 +4,16 @@ const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
 
 const register = async (req, res) => {
+    const { email, password } = req.body
     // create user 
+    console.log(email,password)
     await User.create({ ...req.body})
     .then((result) => {
         // create JWT token
         const token = result.createJWT()
         // send the result to front end
         res.status(201).json({ email:result.email, Token:token })
+        console.log('register successful')
     })
     .catch((err) => {
         if(err.code === 11000){ // check for deplicated key (email)
@@ -30,7 +33,7 @@ const login = async (req, res) => {
     const { email, password } = req.body
     //console.log(email.toLowerCase())
     //console.log(email.trim())
-    //console.log(email,password)
+    console.log(email,password)
     // check require email and password
     if(!email || !password){
         console.log( `please provide all input`)
@@ -59,8 +62,8 @@ const login = async (req, res) => {
     // create token
     const token = user.createJWT()
     // send result to front end
-    res.status(201).json({ email:user.email, Token:token })
-
+    res.status(200).json({ email:user.email, Token:token })
+    console.log('login successful')
 
 }  
 
@@ -103,14 +106,14 @@ const sendEmail = async(req, res) => {
       console.log(error);
     } else {
       const vCode = user.createVerificationCode(code);
-      await User.findByIdAndUpdate(user._id,{verificationCode:vCode})
+      await User.findByIdAndUpdate(user._id,{otp:vCode})
       .catch((err) => {
         console.log(err.message)
         res.status(400).json({err:err.message})
             })
       console.log('Email sent: ' + info.response);
-      res.json({
-        message:"Email send successfully"
+      res.status(200).json({
+        msg:"Email send successfully"
     })
     }
   }); 
@@ -131,11 +134,11 @@ const checkCode = async(req, res) => {
         return res.status(400).json({err: `there is no user with this email`})
     }
     try{
-    const payload = jwt.verify(user.verificationCode, process.env.VERIFICATION_CODE_SECRET)
-    if(payload.code == code){
+    const payload = jwt.verify(user.otp, process.env.OTP_SECRET)
+    if(payload.otp == code){
         const forgotToken = user.createforgotPasswordToken()
-        res.json({
-            message:"code matched",
+        res.status(200).json({
+            msg:"code matched",
             token:forgotToken,
         })
     }else{
@@ -167,8 +170,8 @@ const updatePassword = async(req, res) => {
         console.log( `there is no user with this email`)
         return res.status(400).json({err: `there is no user with this email`})
     }
-    res.json({
-        message:"password changed successfully"
+    res.status(200).json({
+        msg:"password changed successfully"
     })
     } catch (err) {
         res.status(400).json({err:err.message})
