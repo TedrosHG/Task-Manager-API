@@ -2,6 +2,7 @@ const express = require('express')
 
 const { register, login, sendEmail, checkCode, updatePassword} = require('../controllers/users')
 
+
 const router = express.Router()
 
 // swagger for schemas
@@ -209,7 +210,7 @@ router.post('/verifyCode/', checkCode)
 /**
  * @swagger
  * /auth/newPassword:
- *  post:
+ *  patch:
  *      summary: change new password
  *      tags: [Users]
  *      requestBody:
@@ -245,6 +246,8 @@ router.post('/verifyCode/', checkCode)
  *                              type: string
  */
 router.patch('/newPassword/', updatePassword)
+
+
 
 
 module.exports = router

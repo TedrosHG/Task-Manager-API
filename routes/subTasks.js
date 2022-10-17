@@ -112,7 +112,10 @@ const router = express.Router()
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/subTask'                         
+ *                          type: object
+ *                          properties:
+ *                              msg:
+ *                                  type: string                       
  *          401:
  *              description: Authentication failed
  *          400:
@@ -168,10 +171,11 @@ router.route('/delete/:id').delete(deleteSubTask)
  *              application/json:
  *                  schema:
  *                      type: object
- *                      status:
- *                          type: string
- *                          enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
- *                          default: "Upcoming"
+ *                      properties:
+ *                          status:
+ *                              type: string
+ *                              enum: ["Canceled", "Done"]
+ *                              default: "Done"
  *      responses:
  *          200:
  *              description: subTask status updated successfully
@@ -179,18 +183,18 @@ router.route('/delete/:id').delete(deleteSubTask)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          msg:
- *                              type: string
+ *                          properties:
+ *                              msg:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string                     
+ *                          properties:
+ *                              err:
+ *                                  type: string                     
  *          401:
  *              description: Authentication failed
  */
@@ -262,18 +266,18 @@ router.route('/edit/:id').get(editSubTask)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          msg:
- *                              type: string
+ *                          properties:
+ *                              msg:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string                     
+ *                          properties:
+ *                              err:
+ *                                  type: string                     
  *          401:
  *              description: Authentication failed
  */

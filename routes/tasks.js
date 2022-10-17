@@ -134,7 +134,10 @@ router.route('/').get(getAllTasks)
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/task'                         
+ *                          type: object
+ *                          properties:
+ *                              msg:
+ *                                  type: string                        
  *          401:
  *              description: Authentication failed
  *          400:
@@ -223,10 +226,11 @@ router.route('/delete/:id').delete(deleteTask)
  *              application/json:
  *                  schema:
  *                      type: object
- *                      status:
- *                          type: string
- *                          enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
- *                          default: "Upcoming"
+ *                      properties:
+ *                          status:
+ *                              type: string
+ *                              enum: ["Canceled", "Done"]
+ *                              default: "Done"
  *      responses:
  *          200:
  *              description: task status updated successfully
@@ -234,18 +238,18 @@ router.route('/delete/:id').delete(deleteTask)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          msg:
- *                              type: string
+ *                          properties:
+ *                              msg:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string                     
+ *                          properties:
+ *                              err:
+ *                                  type: string                     
  *          401:
  *              description: Authentication failed
  */
@@ -280,9 +284,9 @@ router.route('/updateStatus/:id').patch(updateTaskStatus)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string                     
+ *                          properties:
+ *                              err:
+ *                                  type: string                     
  *          401:
  *              description: Authentication failed
  */
@@ -317,18 +321,18 @@ router.route('/edit/:id').get(editTask)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          msg:
- *                              type: string
+ *                          properties:
+ *                              msg:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string                     
+ *                          properties:
+ *                              err:
+ *                                  type: string                     
  *          401:
  *              description: Authentication failed
  */

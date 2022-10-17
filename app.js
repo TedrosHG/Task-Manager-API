@@ -5,6 +5,8 @@ const cors = require('cors')
 var createError = require('http-errors');
 const swaggerUI = require("swagger-ui-express")
 const swaggerJsDoc = require('swagger-jsdoc') 
+const schedule = require('node-schedule')
+const moment = require('moment')
 
 
 // import files from other folders
@@ -13,6 +15,7 @@ const taskRouter = require('./routes/tasks')
 const subTaskRouter = require('./routes/subTasks')
 const connectDB = require('./db/connect')
 const auth = require('./middleware/authentication')
+const { statusSchedule} = require('./controllers/schedule')
 
 // swagger
 const options = {
@@ -37,6 +40,7 @@ const specs = swaggerJsDoc(options)
 // call express function
 const app = express()
 
+schedule.scheduleJob('*/1 * * * *', statusSchedule)
 
 // middleware to use request from body or url
 app.use(express.json());
@@ -48,9 +52,9 @@ app.use('/api/taskManager/tasks', auth, taskRouter);
 app.use('/api/taskManager/subTasks', auth, subTaskRouter);
 app.use('/api/taskManager/auth', userRouter);
 
-app.get('/', (req, res) => {
-    res.send('welcome to task manager API')
-})
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -60,7 +64,7 @@ app.use(function(req, res, next) {
     next(err)
   });
 
-// Error handler
+// Error handler 
 app.use((err, req, res, next) => {
     res.status(err.status || 500)
     res.json({

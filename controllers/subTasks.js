@@ -3,7 +3,7 @@ const Task = require('../models/task')
 
 
 const createSubTask = async (req, res) => {
-    const task = await Task.findById(req.params.id).catch((err) => {
+    const task = Task.findOne({ user: req.user.userId, _id: req.params.id }).catch((err) => {
         console.log(err.message)
         res.status(400).json({err:err.message})
     })

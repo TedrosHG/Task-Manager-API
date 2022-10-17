@@ -1,9 +1,8 @@
 const Task = require('../models/task')
 const SubTask = require('../models/subTask')
 
-
 const getAllTasks = async (req, res) => {
-    console.log(req.user.userId)
+    //console.log(req.user.userId)
     await Task.find({ user: req.user.userId })
         .then(async (results) => {
             let tasks = [];
@@ -80,8 +79,10 @@ const createTask = async (req, res) => {
 }
 const updateTaskStatus = async (req, res) => {
     const { status } = req.body
-
-    const task = await Task.findByIdAndUpdate(req.params.id, { status }).catch((err) => {
+    if(status != 'Done' && status != 'Canceled'){
+        return res.status(404).json({ err: `Only status Done or Canceled can be selected` })
+    }
+    const task = await Task.findOne({ user: req.user.userId, _id: req.params.id }, { status }).catch((err) => {
         console.log(err.message)
         res.status(400).json({ err: err.message })
     })
@@ -89,7 +90,18 @@ const updateTaskStatus = async (req, res) => {
         console.log(`there is no task with this id`)
         return res.status(404).json({ err: `there is no task with this id` })
     }
-    res.json({
+
+    // check input status
+    if(task.status != "In progress"){
+        return res.status(404).json({ err: "you only can change status in 'In progress' status" })
+    }
+    //update status
+    await task.updateOne(req.params.id, { $set: { status } }).catch((err) => {
+        console.log(err.message)
+        res.status(400).json({ err: err.message })
+    })
+    
+    res.status(200).json({
         msg: "status changed successfully"
     })
 
@@ -97,7 +109,7 @@ const updateTaskStatus = async (req, res) => {
 }
 const deleteTask = async (req, res) => {
     let msg = ''
-    const task = await Task.findById(req.params.id).catch((err) => {
+    const task = await Task.findOne({ user: req.user.userId, _id: req.params.id }).catch((err) => {
         console.log(err.message)
         res.status(400).json({ err: err.message })
     })
@@ -135,7 +147,7 @@ const editTask = async (req, res) => {
 }
 
 const updateTask = async (req, res) => {
-    await Task.findByIdAndUpdate(req.params.id,{ user: req.user.userId, ...req.body })
+    await Task.findOneAndUpdate({ user: req.user.userId, _id: req.params.id },{ user: req.user.userId, ...req.body })
         .then((results) => {
             res.status(201).json({ msg: "Task has been successfully updated." })
         })

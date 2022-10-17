@@ -7,7 +7,6 @@ const auth = async (req, res, next) => {
         return res.status(401).json({err: "Authentication Failed"})
     }
     const token = authHeader.split(' ')[1]
-
     try {
         const payload = jwt.verify(token, process.env.JWT_SECRET)
         // attach user id inorder to be used by other routes
@@ -17,5 +16,5 @@ const auth = async (req, res, next) => {
         return res.status(401).json({err: "Authentication Failed"})
     }
 }
-
+ 
 module.exports = auth
