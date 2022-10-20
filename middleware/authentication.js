@@ -4,7 +4,7 @@ const auth = async (req, res, next) => {
     // check header
     const authHeader = req.headers.authorization
     if(!authHeader || !authHeader.startsWith('Bearer ')){
-        return res.status(401).json({err: "Authentication Failed"})
+        return res.status(400).json({err: "Authentication Failed, there is no token"})
     }
     const token = authHeader.split(' ')[1]
     try {
@@ -13,7 +13,7 @@ const auth = async (req, res, next) => {
         req.user = { userId: payload.userId}
         next()
     } catch (error) {
-        return res.status(401).json({err: "Authentication Failed"})
+        return res.status(401).json({err: "Authentication Failed, invalid token"})
     }
 }
  

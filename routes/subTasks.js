@@ -46,11 +46,6 @@ const router = express.Router()
  *                  enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"] 
  *                  default: "30 mins"
  *                  description: The task duration
- *              category:
- *                  type: string
- *                  enum: ["Work", "Family", "Education", "Shopping", "Others"]
- *                  default: "Others"
- *                  description: The task category
  *              priority:
  *                  type: integer
  *                  enum: [1, 2, 3, 4, 5]
@@ -66,6 +61,10 @@ const router = express.Router()
  *                  enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
  *                  default: "Upcoming"
  *                  description: The task status
+ *              reminderStatus:
+ *                  type: boolean
+ *                  default: "false"
+ *                  description: The reminder status that tells if reminder is send or not
  * 
  */
 
@@ -90,6 +89,7 @@ const router = express.Router()
  * /subTasks/create:
  *  post:
  *      summary: create sub task
+ *      description: create sub task
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -128,6 +128,7 @@ router.route('/create/:id').post(createSubTask)
  * /subTasks/delete/{id}:
  *  delete:
  *      summary: delete the subTask by id
+ *      description: delete the subTask by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -155,6 +156,7 @@ router.route('/delete/:id').delete(deleteSubTask)
  * /subTasks/updateStatus/{id}:
  *  patch:
  *      summary: change subTask status
+ *      description: change subTask status
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -174,8 +176,8 @@ router.route('/delete/:id').delete(deleteSubTask)
  *                      properties:
  *                          status:
  *                              type: string
- *                              enum: ["Canceled", "Done"]
- *                              default: "Done"
+ *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
+ *                              default: "Upcoming"
  *      responses:
  *          200:
  *              description: subTask status updated successfully
@@ -205,6 +207,7 @@ router.route('/updateStatus/:id').patch(updateSubTaskStatus)
  * /subTasks/edit/{id}:
  *  get:
  *      summary: edit subTask by id
+ *      description: edit subTask by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -221,7 +224,6 @@ router.route('/updateStatus/:id').patch(updateSubTaskStatus)
  *              content:
  *                  application/json:
  *                      schema:
- *                          type: object
  *                          $ref: '#/components/schemas/subTask'
  *          400:
  *              description: Something went wrong
@@ -242,6 +244,7 @@ router.route('/edit/:id').get(editSubTask)
  * /subTasks/update/{id}:
  *  put:
  *      summary: update subTask by id
+ *      description: update subTask by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -257,7 +260,6 @@ router.route('/edit/:id').get(editSubTask)
  *          content:
  *              application/json:
  *                  schema:
- *                      type: object
  *                      $ref: '#/components/schemas/subTask'
  *      responses:
  *          200:

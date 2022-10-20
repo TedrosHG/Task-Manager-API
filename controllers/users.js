@@ -83,15 +83,18 @@ const sendEmail = async(req, res) => {
     }else{
     //generate four digit number 
     var code = Math.floor(1000 + Math.random() * 9000);
-
+ 
     var transporter = nodemailer.createTransport({
-    service: 'gmail',
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false, // true for 587, false for other ports
+        requireTLS: true,
     auth: {
       user: process.env.MY_EMAIL,
       pass: process.env.MY_PASSWORD
     }
   });
-  
+
   var mailOptions = {
     from: process.env.MY_EMAIL,
     to: req.body.email,
@@ -100,15 +103,16 @@ const sendEmail = async(req, res) => {
     The code is : ${code}
     The code will expire in 1 hour.`
   };
-  
+
   transporter.sendMail(mailOptions, async function(error, info){
     if (error) {
       console.log(error);
+      res.status(400).json({error})
     } else {
       const vCode = user.createVerificationCode(code);
       await User.findByIdAndUpdate(user._id,{otp:vCode})
       .catch((err) => {
-        console.log(err.message)
+        console.log(err.message,"not send")
         res.status(400).json({err:err.message})
             })
       console.log('Email sent: ' + info.response);

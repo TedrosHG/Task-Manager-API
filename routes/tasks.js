@@ -9,8 +9,6 @@ const {
 editTask,
 updateTask } = require('../controllers/tasks')
 
-
-
 const router = express.Router()
 
 // swagger for schemas
@@ -71,6 +69,10 @@ const router = express.Router()
  *                  enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
  *                  default: "Upcoming"
  *                  description: The task status
+ *              reminderStatus:
+ *                  type: boolean
+ *                  default: "false"
+ *                  description: The reminder status that tells if reminder is send or not
  * 
  */
 
@@ -95,6 +97,7 @@ const router = express.Router()
  * /tasks:
  *  get:
  *      summary: Returns the list of all the tasks and subTasks
+ *      description: Returns the list of all the tasks and subTasks
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -104,9 +107,37 @@ const router = express.Router()
  *              content:
  *                  application/json:
  *                      schema:
- *                          type: array
- *                          items:
- *                              $ref: '#/components/schemas/task'
+ *                          type: object
+ *                          properties:
+ *                              tasks:
+ *                                  type: array
+ *                                  items:
+ *                                      type: object
+ *                                      properties:
+ *                                          _id:
+ *                                              type: string
+ *                                          user:
+ *                                              type: string
+ *                                          title:
+ *                                              type: string
+ *                                          note:
+ *                                              type: string
+ *                                          dateTime:
+ *                                              type: string
+ *                                          duration:
+ *                                              type: string
+ *                                          category:
+ *                                              type: string
+ *                                          priority:
+ *                                              type: integer
+ *                                          reminder:
+ *                                              type: string
+ *                                          status:
+ *                                              type: string
+ *                                          subTask:
+ *                                              type: array
+ *                                              items:
+ *                                                  $ref: '#/components/schemas/subTask'
  *          401:
  *              description: Authentication failed
  *          400:
@@ -119,6 +150,7 @@ router.route('/').get(getAllTasks)
  * /tasks/create:
  *  post:
  *      summary: create task
+ *      description: create task
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -150,6 +182,7 @@ router.route('/create').post(createTask)
  * /tasks/{id}:
  *  get:
  *      summary: Returns the tasks and subTasks by id
+ *      description: Get single task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -166,7 +199,14 @@ router.route('/create').post(createTask)
  *              content:
  *                  application/json:
  *                      schema:
- *                          $ref: '#/components/schemas/task'                       
+ *                          type: object
+ *                          properties:
+ *                              task:
+ *                                  $ref: '#/components/schemas/task'    
+ *                              subTasks:
+ *                                  type: array
+ *                                  items: 
+ *                                      $ref: '#/components/schemas/subTask'                  
  *          401:
  *              description: Authentication failed
  *          400:
@@ -181,6 +221,7 @@ router.route('/:id').get(getTask)
  * /tasks/delete/{id}:
  *  delete:
  *      summary: delete the task by id
+ *      description: delete the task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -210,6 +251,7 @@ router.route('/delete/:id').delete(deleteTask)
  * /tasks/updateStatus/{id}:
  *  patch:
  *      summary: change task status
+ *      description: change task status
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -229,8 +271,8 @@ router.route('/delete/:id').delete(deleteTask)
  *                      properties:
  *                          status:
  *                              type: string
- *                              enum: ["Canceled", "Done"]
- *                              default: "Done"
+ *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
+ *                              default: "Upcoming"
  *      responses:
  *          200:
  *              description: task status updated successfully
@@ -260,6 +302,7 @@ router.route('/updateStatus/:id').patch(updateTaskStatus)
  * /tasks/edit/{id}:
  *  get:
  *      summary: edit task by id
+ *      description: edit task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -276,7 +319,6 @@ router.route('/updateStatus/:id').patch(updateTaskStatus)
  *              content:
  *                  application/json:
  *                      schema:
- *                          type: object
  *                          $ref: '#/components/schemas/task'
  *          400:
  *              description: Something went wrong
@@ -297,6 +339,7 @@ router.route('/edit/:id').get(editTask)
  * /tasks/update/{id}:
  *  put:
  *      summary: update task by id
+ *      description: update task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -312,7 +355,6 @@ router.route('/edit/:id').get(editTask)
  *          content:
  *              application/json:
  *                  schema:
- *                      type: object
  *                      $ref: '#/components/schemas/task'
  *      responses:
  *          200:

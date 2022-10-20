@@ -34,7 +34,7 @@ const getAllTasks = async (req, res) => {
                     return res.status(400).json({ errs: errors })
                 })
                 tasks.push(task)
-                
+                 
             }
             res.status(200).json({ tasks })
         })
@@ -55,7 +55,7 @@ const getTask = async (req, res) => {
             let task = {};
             
             await SubTask.find({ task: results._id }).then((values) => {
-            
+                //console.log(Task.schema.path('duration').enumValues);
                 res.status(200).json({ task: results, subTasks:values })
 
             }).catch((errors) => {
@@ -70,7 +70,7 @@ const createTask = async (req, res) => {
 
     await Task.create({ user: req.user.userId, ...req.body })
         .then((results) => {
-            res.status(201).json({ message: "Task has been successfully created." })
+            res.status(201).json({ msg: "Task has been successfully created." })
         })
         .catch((err) => {
             res.status(400).json({ err: err.errors })
@@ -139,7 +139,7 @@ const editTask = async (req, res) => {
             if (!result) {
                 return res.status(400).json({ err: "there is no task with this id" })
             }
-            res.json({ task: result })
+            res.status(200).json({ task: result })
         })
         .catch((err) => {
             res.status(400).json({ err })
@@ -149,7 +149,7 @@ const editTask = async (req, res) => {
 const updateTask = async (req, res) => {
     await Task.findOneAndUpdate({ user: req.user.userId, _id: req.params.id },{ user: req.user.userId, ...req.body })
         .then((results) => {
-            res.status(201).json({ msg: "Task has been successfully updated." })
+            res.status(200).json({ msg: "Task has been successfully updated." })
         })
         .catch((err) => {
             res.status(400).json({ err: err.errors })

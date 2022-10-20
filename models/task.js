@@ -51,6 +51,10 @@ const TaskSchema = new mongoose.Schema({
         enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"],
         default: "Upcoming",
     },
+    reminderStatus: {
+        type: Boolean,
+        default: false,
+    },
 },
 { timestamps: true }
 )
