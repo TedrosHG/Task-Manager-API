@@ -28,7 +28,7 @@ const router = express.Router()
  *              - reminder
  *              - status
  *          properties:
- *              id:
+ *              _id:
  *                  type: string
  *                  description: The auto-generated id of the task
  *              user:
@@ -159,7 +159,35 @@ router.route('/').get(getAllTasks)
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/task'
+ *                      type: object
+ *                      properties:
+ *                          title:
+ *                              type: string
+ *                          note:
+ *                              type: string
+ *                          dateTime:
+ *                              type: string
+ *                              format: date
+ *                          duration:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"] 
+ *                              default: "30 mins"
+ *                          category:
+ *                              type: string
+ *                              enum: ["Work", "Family", "Education", "Shopping", "Others"]
+ *                              default: "Others"
+ *                          priority:
+ *                              type: integer
+ *                              enum: [1, 2, 3, 4, 5]
+ *                              default: 1
+ *                          reminder:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
+ *                              default: "30 mins"
+ *                          status:
+ *                              type: string
+ *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
+ *                              default: "Upcoming"
  *      responses:
  *          200:
  *              description: The task was created successfully
@@ -179,20 +207,22 @@ router.route('/create').post(createTask)
 
 /**
  * @swagger
- * /tasks/{id}:
+ * /tasks/detail:
  *  get:
  *      summary: Returns the tasks and subTasks by id
  *      description: Get single task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The task id
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
  *      responses:
  *          200:
  *              description: The task description by id
@@ -214,24 +244,26 @@ router.route('/create').post(createTask)
  *          404:
  *              description: The task was not found
  */
-router.route('/:id').get(getTask)
+router.route('/detail').get(getTask)
 
 /**
  * @swagger
- * /tasks/delete/{id}:
+ * /tasks/delete:
  *  delete:
  *      summary: delete the task by id
  *      description: delete the task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The task id
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
  *      responses:
  *          200:
  *              description: deleted task                     
@@ -244,24 +276,17 @@ router.route('/:id').get(getTask)
  *          500:
  *              description: internal server error
  */
-router.route('/delete/:id').delete(deleteTask)
+router.route('/delete').delete(deleteTask)
 
 /**
  * @swagger
- * /tasks/updateStatus/{id}:
+ * /tasks/updateStatus:
  *  patch:
  *      summary: change task status
  *      description: change task status
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The task id
  *      requestBody:
  *          required: true
  *          content:
@@ -273,6 +298,8 @@ router.route('/delete/:id').delete(deleteTask)
  *                              type: string
  *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
  *                              default: "Upcoming"
+ *                          _id:
+ *                              type: string
  *      responses:
  *          200:
  *              description: task status updated successfully
@@ -282,7 +309,7 @@ router.route('/delete/:id').delete(deleteTask)
  *                          type: object
  *                          properties:
  *                              msg:
- *                                  type: string
+ *                                  type: string 
  *          400:
  *              description: Something went wrong
  *              content:
@@ -295,24 +322,26 @@ router.route('/delete/:id').delete(deleteTask)
  *          401:
  *              description: Authentication failed
  */
-router.route('/updateStatus/:id').patch(updateTaskStatus)
+router.route('/updateStatus').patch(updateTaskStatus)
 
 /**
  * @swagger
- * /tasks/edit/{id}:
+ * /tasks/edit:
  *  get:
  *      summary: edit task by id
  *      description: edit task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The task id
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
  *      responses:
  *          200:
  *              description: get task to be edited successfully
@@ -332,24 +361,17 @@ router.route('/updateStatus/:id').patch(updateTaskStatus)
  *          401:
  *              description: Authentication failed
  */
-router.route('/edit/:id').get(editTask)
+router.route('/edit').get(editTask)
 
 /**
  * @swagger
- * /tasks/update/{id}:
+ * /tasks/update:
  *  put:
  *      summary: update task by id
  *      description: update task by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The task id
  *      requestBody:
  *          required: true
  *          content:
@@ -378,7 +400,7 @@ router.route('/edit/:id').get(editTask)
  *          401:
  *              description: Authentication failed
  */
-router.route('/update/:id').put(updateTask)
+router.route('/update').put(updateTask)
 
 
 module.exports = router

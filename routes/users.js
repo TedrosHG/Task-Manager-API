@@ -152,6 +152,8 @@ router.post('/login', login)
  *                      properties:
  *                          msg:
  *                              type: string
+ *                          email:
+ *                              type: string
  *          400:
  *              description: Something went wrong
  *              content:
@@ -225,6 +227,9 @@ router.post('/verifyCode/', checkCode)
  *                              minLength: 8
  *                          token:
  *                              type: integer
+ *                          email:
+ *                              type: string
+ *                              format: email
  *      responses:
  *          200:
  *              description: Email send successfully
@@ -246,7 +251,6 @@ router.post('/verifyCode/', checkCode)
  *                              type: string
  */
 router.patch('/newPassword/', updatePassword)
-
 
 
 

@@ -12,16 +12,17 @@ const register = async (req, res) => {
         // create JWT token
         const token = result.createJWT()
         // send the result to front end
-        res.status(201).json({ email:result.email, Token:token })
         console.log('register successful')
+        return res.status(201).json({ email:result.email, Token:token })
+        
     })
     .catch((err) => {
         if(err.code === 11000){ // check for deplicated key (email)
              console.log("This email is already taken")
-            res.status(400).json({err:"This email is already taken"})
+            return res.status(400).json({err:"This email is already taken"})
         }else{
              console.log(err.message)
-            res.status(400).json({err:err.message}) 
+            return res.status(400).json({err:err.message}) 
         }
         
     })
@@ -43,7 +44,7 @@ const login = async (req, res) => {
     // check user with this email
     const user = await User.findOne({email}).catch((err) => {
         console.log(err.message)
-        res.status(400).json({err:err.message})
+        return res.status(400).json({err:err.message})
     })
     if(!user){
         console.log( `Invalid Credentials(email)`)
@@ -62,20 +63,21 @@ const login = async (req, res) => {
     // create token
     const token = user.createJWT()
     // send result to front end
-    res.status(200).json({ email:user.email, Token:token })
     console.log('login successful')
+    return res.status(200).json({ email:user.email, Token:token })
+    
 
 }  
 
 const sendEmail = async(req, res) => {
     const { email } = req.body
     if(!email){
-        res.status(400).json({err:'Email is required'})
+        return res.status(400).json({err:'Email is required'})
     }
     // check user with this email
     const user = await User.findOne({ email }).catch((err) => {
         console.log(err.message)
-        res.status(400).json({err:err.message})
+        return res.status(400).json({err:err.message})
     })
     if(!user){
         console.log( `there is no user with this email`)
@@ -107,17 +109,18 @@ const sendEmail = async(req, res) => {
   transporter.sendMail(mailOptions, async function(error, info){
     if (error) {
       console.log(error);
-      res.status(400).json({error})
+      return res.status(400).json({error})
     } else {
       const vCode = user.createVerificationCode(code);
       await User.findByIdAndUpdate(user._id,{otp:vCode})
       .catch((err) => {
         console.log(err.message,"not send")
-        res.status(400).json({err:err.message})
+        return res.status(400).json({err:err.message})
             })
       console.log('Email sent: ' + info.response);
-      res.status(200).json({
-        msg:"Email send successfully"
+      return res.status(200).json({
+        msg:"Email send successfully",
+        email
     })
     }
   }); 
@@ -126,12 +129,15 @@ const sendEmail = async(req, res) => {
 
 const checkCode = async(req, res) => {
     const {  email, code } = req.body
+    if(!email){
+        return res.status(400).json({err:'Email is required'})
+    }
     if(code.length != 4){
-        res.status(400).json({err:'code must be 4 characters'})
+        return res.status(400).json({err:'code must be 4 characters'})
     }
     const user = await User.findOne({email}).catch((err) => {
         console.log(err.message)
-        res.status(400).json({err:err.message})
+        return res.status(400).json({err:err.message})
     })
     if(!user){
         console.log( `there is no user with this email`)
@@ -141,44 +147,54 @@ const checkCode = async(req, res) => {
     const payload = jwt.verify(user.otp, process.env.OTP_SECRET)
     if(payload.otp == code){
         const forgotToken = user.createforgotPasswordToken()
-        res.status(200).json({
+        return res.status(200).json({
             msg:"code matched",
             token:forgotToken,
         })
     }else{
-        res.status(400).json({
+        return res.status(400).json({
             err:"wrong code, try again."
         })
     }
     }catch(err) {
-        res.status(400).json({err:err.message})
+        return res.status(400).json({err:err.message})
     }
     
     
 }
 
 const updatePassword = async(req, res) => {
-    const { email, password } = req.body
+    const { email, password, token } = req.body
+    console.log('email: ',email,'password: ',password,'token: ',token)
+    if(!email){
+        return res.status(400).json({err:'Email is required'})
+    }
+    if(!token){
+        return res.status(400).json({err:'token is required'})
+    }
     if(password.length < 8){
-        res.status(400).json({err:'password must be 8 or more characters'})
-    }
+        return res.status(400).json({err:'password must be 8 or more characters'})
+    } 
     try {
-        jwt.verify(req.body.token, process.env.FORGOT_PASSWORD_SECRET)
+        jwt.verify(token, process.env.FORGOT_PASSWORD_SECRET)
         const salt = await bcrypt.genSalt(10)
-    const hashedPassword = await bcrypt.hash(password, salt) 
-    const user = await User.findOneAndUpdate({email}, {password:hashedPassword}).catch((err) => {
-        console.log(err.message)
-        res.status(400).json({err:err.message})
-    })
-    if(!user){
-        console.log( `there is no user with this email`)
-        return res.status(400).json({err: `there is no user with this email`})
-    }
-    res.status(200).json({
-        msg:"password changed successfully"
-    })
+        await bcrypt.hash(password, salt)
+        .then(async (hashedPassword)=> {
+        const user = await User.findOneAndUpdate({email}, {password:hashedPassword}).catch((err) => {
+            console.log(err.message)
+            return res.status(400).json({err:err.message})
+        })
+        if(!user){
+            console.log( `there is no user with this email`)
+            return res.status(400).json({err: `there is no user with this email`})
+        }
+        return res.status(200).json({
+            msg:"password changed successfully"
+        })
+    }) 
+    
     } catch (err) {
-        res.status(400).json({err:err.message})
+        return res.status(400).json({err:err.message})
     }
     
 }

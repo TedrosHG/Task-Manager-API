@@ -93,19 +93,38 @@ const router = express.Router()
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The Task id
  *      requestBody:
  *          required: true
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/subTask'
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
+ *                          title:
+ *                              type: string
+ *                          note:
+ *                              type: string
+ *                          dateTime:
+ *                              type: string
+ *                              format: date
+ *                          duration:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"] 
+ *                              default: "30 mins"
+ *                          priority:
+ *                              type: integer
+ *                              enum: [1, 2, 3, 4, 5]
+ *                              default: 1
+ *                          reminder:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
+ *                              default: "30 mins"
+ *                          status:
+ *                              type: string
+ *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
+ *                              default: "Upcoming"
  *      responses:
  *          201:
  *              description: The task was created successfully
@@ -121,24 +140,26 @@ const router = express.Router()
  *          400:
  *              description: Something went wrong
  */
-router.route('/create/:id').post(createSubTask)
+router.route('/create').post(createSubTask)
 
 /**
  * @swagger
- * /subTasks/delete/{id}:
+ * /subTasks/delete:
  *  delete:
  *      summary: delete the subTask by id
  *      description: delete the subTask by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The subTask id
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
  *      responses:
  *          200:
  *              description: deleted subTask                     
@@ -149,24 +170,17 @@ router.route('/create/:id').post(createSubTask)
  *          404:
  *              description: The subTask was not found
  */
-router.route('/delete/:id').delete(deleteSubTask)
+router.route('/delete').delete(deleteSubTask)
 
 /**
  * @swagger
- * /subTasks/updateStatus/{id}:
+ * /subTasks/updateStatus:
  *  patch:
  *      summary: change subTask status
  *      description: change subTask status
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The subTask id
  *      requestBody:
  *          required: true
  *          content:
@@ -178,6 +192,8 @@ router.route('/delete/:id').delete(deleteSubTask)
  *                              type: string
  *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
  *                              default: "Upcoming"
+ *                          _id:
+ *                              type: string
  *      responses:
  *          200:
  *              description: subTask status updated successfully
@@ -200,24 +216,26 @@ router.route('/delete/:id').delete(deleteSubTask)
  *          401:
  *              description: Authentication failed
  */
-router.route('/updateStatus/:id').patch(updateSubTaskStatus)
+router.route('/updateStatus').patch(updateSubTaskStatus)
 
 /**
  * @swagger
- * /subTasks/edit/{id}:
+ * /subTasks/edit:
  *  get:
  *      summary: edit subTask by id
  *      description: edit subTask by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The subTask id
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
  *      responses:
  *          200:
  *              description: get subTask to be edited
@@ -237,24 +255,17 @@ router.route('/updateStatus/:id').patch(updateSubTaskStatus)
  *          401:
  *              description: Authentication failed
  */
-router.route('/edit/:id').get(editSubTask)
+router.route('/edit').get(editSubTask)
 
 /**
  * @swagger
- * /subTasks/update/{id}:
+ * /subTasks/update:
  *  put:
  *      summary: update subTask by id
  *      description: update subTask by id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
- *      parameters:
- *          -   in: path
- *              name: id
- *              schema:
- *                  type: string
- *              required: true
- *              description: The subTask id
  *      requestBody:
  *          required: true
  *          content:
@@ -283,6 +294,6 @@ router.route('/edit/:id').get(editSubTask)
  *          401:
  *              description: Authentication failed
  */
-router.route('/update/:id').put(updateSubTask)
+router.route('/update').put(updateSubTask)
 
 module.exports = router

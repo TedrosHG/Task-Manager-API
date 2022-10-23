@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken')
 
 const auth = async (req, res, next) => {
     // check header
+    console.log('token: ',req.headers.authorization)
     const authHeader = req.headers.authorization
     if(!authHeader || !authHeader.startsWith('Bearer ')){
         return res.status(400).json({err: "Authentication Failed, there is no token"})
@@ -16,5 +17,5 @@ const auth = async (req, res, next) => {
         return res.status(401).json({err: "Authentication Failed, invalid token"})
     }
 }
- 
+
 module.exports = auth

@@ -3,7 +3,8 @@ const Task = require('../models/task')
 
 
 const createSubTask = async (req, res) => {
-    const task = Task.findOne({ user: req.user.userId, _id: req.params.id }).catch((err) => {
+    console.log('createSubTask')
+    const task = Task.findOne({ user: req.user.userId, _id: req.body._id }).catch((err) => {
         console.log(err.message)
         return res.status(400).json({err:err.message})
     })
@@ -12,7 +13,7 @@ const createSubTask = async (req, res) => {
         return res.status(400).json({err: `there is no task with this id`})
     }
 
-    await SubTask.create({ task: req.params.id, ...req.body })
+    await SubTask.create({ task: req.body._id, ...req.body })
         .then((results) => {
             return res.status(201).json({ msg: "sub Task has been successfully created." })
         })
@@ -22,8 +23,8 @@ const createSubTask = async (req, res) => {
 }
 
 const deleteSubTask = async (req, res) => {
-
-    const subTask = await SubTask.findById(req.params.id).catch((error) => {
+    console.log('deleteSubTask')
+    const subTask = await SubTask.findById(req.body._id).catch((error) => {
         return res.status(400).json({err:error.message})
     })
     if(!subTask){
@@ -45,8 +46,8 @@ const deleteSubTask = async (req, res) => {
 
 
 const updateSubTaskStatus = async (req, res) => {
-
-    const subTask = await SubTask.findById(req.params.id).catch((err) => {
+    console.log('updateSubTaskStatus')
+    const subTask = await SubTask.findById(req.body._id).catch((err) => {
         console.log(err.message)
         return res.status(400).json({ err: err.message })
     })
@@ -69,7 +70,8 @@ const updateSubTaskStatus = async (req, res) => {
 }
 
 const editSubTask = async (req, res) => {
-    const subTask = await SubTask.findById(req.params.id).catch((error) => {
+    console.log('editSubTask')
+    const subTask = await SubTask.findById(req.body._id).catch((error) => {
         return res.status(400).json({err:error.message})
     })
     if(!subTask){
@@ -86,7 +88,8 @@ const editSubTask = async (req, res) => {
 }
 
 const updateSubTask = async (req, res) => {
-    const subTask = await SubTask.findById(req.params.id).catch((error) => {
+    console.log('updateSubTask')
+    const subTask = await SubTask.findById(req.body._id).catch((error) => {
         return res.status(400).json({err:error.message})
     })
     if(!subTask){
@@ -98,7 +101,7 @@ const updateSubTask = async (req, res) => {
     if(!task){
         return res.status(400).json({err:'there is no task with this id'})
     }
-    await SubTask.updateOne({ ...req.body })
+    await subTask.updateOne({ ...req.body })
         .then((result) => {
             return res.status(200).json({ msg: "sub Task has been successfully updated." })
         })

@@ -38,7 +38,7 @@ const reminderSchedule = async (req, res) => {
                             })
                         const payload = JSON.stringify({
                             title: 'Reminder For Task',
-                            body:  `There is a task that will start at ${task.dateTime},
+                            body: `There is a task that will start at ${task.dateTime},
                              and you have to finish it in ${task.duration}`,
                         })
                         console.log(payload)
@@ -73,13 +73,13 @@ const reminderSchedule = async (req, res) => {
                                         .catch((err) => {
                                             console.log(err);
                                         })
-                                        const payload = JSON.stringify({
-                                            title: 'Reminder For subTask',
-                                            body:  `There is a subTask that will start at ${subTask.dateTime},
+                                    const payload = JSON.stringify({
+                                        title: 'Reminder For subTask',
+                                        body: `There is a subTask that will start at ${subTask.dateTime},
                                              and you have to finish it in ${subTask.duration}`,
-                                        }) 
-                                        console.log(payload)
-                                        webPush.sendNotification(subscribe, payload).catch(err => console.error(err))
+                                    })
+                                    console.log(payload)
+                                    webPush.sendNotification(subscribe, payload).catch(err => console.error(err))
                                 }
                             }
                         } else {
@@ -113,75 +113,79 @@ const statusSchedule = async (req, res) => {
         .catch((err2) => {
             console.log(err2)
         })
-    tasks.forEach(async task => {
-        let durationMins;
-        task.duration.split(' ')[1] == 'mins' ?
-            durationMins = moment(task.dateTime).add(task.duration.split(' ')[0], 'm').toDate() :
-            task.duration.split(' ')[1] == 'hrs' ?
-                durationMins = moment(task.dateTime).add(task.duration.split(' ')[0], 'h').toDate() : 0
+    if (tasks) {
+        tasks.forEach(async task => {
+            let durationMins;
+            task.duration.split(' ')[1] == 'mins' ?
+                durationMins = moment(task.dateTime).add(task.duration.split(' ')[0], 'm').toDate() :
+                task.duration.split(' ')[1] == 'hrs' ?
+                    durationMins = moment(task.dateTime).add(task.duration.split(' ')[0], 'h').toDate() : 0
 
-        if (task.status != "Done" && task.status != "Canceled") {
+            if (task.status != "Done" && task.status != "Canceled") {
 
-            if (task.dateTime <= Date.now() && durationMins > Date.now()) {
-                if (task.status != 'In progress') {
-                    await task.updateOne({ status: 'In progress' })
-                        .catch((err) => {
-                            console.log(err);
-                        })
-                }
-            } else if (durationMins <= Date.now()) {
-                if (task.status != 'Overdue') {
-                    await task.updateOne({ status: 'Overdue' })
-                        .catch((err) => {
-                            console.log(err);
-                        })
-                }
-            } else if (task.dateTime >= Date.now()) {
-                if (task.status != 'Upcoming') {
-                    await task.updateOne({ status: 'Upcoming' })
-                        .catch((err) => {
-                            console.log(err);
-                        })
-                }
-            }
-        }
-
-    })
-    subTasks.forEach(async subTask => {
-        let durationMins;
-        subTask.duration.split(' ')[1] == 'mins' ?
-            durationMins = moment(subTask.dateTime).add(subTask.duration.split(' ')[0], 'm').toDate() :
-            subTask.duration.split(' ')[1] == 'hrs' ?
-                durationMins = moment(subTask.dateTime).add(subTask.duration.split(' ')[0], 'h').toDate() : 0
-
-        if (subTask.status != "Done" && subTask.status != "Canceled") {
-
-            if (subTask.dateTime <= Date.now() && durationMins > Date.now()) {
-
-                if (subTask.status != 'In progress') {
-                    await subTask.updateOne({ status: 'In progress' })
-                        .catch((err) => {
-                            console.log(err);
-                        })
-                }
-            } else if (durationMins <= Date.now()) {
-                if (subTask.status != 'Overdue') {
-                    await subTask.updateOne({ status: 'Overdue' })
-                        .catch((err) => {
-                            console.log(err);
-                        })
-                }
-            } else if (subTask.dateTime >= Date.now()) {
-                if (subTask.status != 'Upcoming') {
-                    await subTask.updateOne({ status: 'Upcoming' })
-                        .catch((err) => {
-                            console.log(err);
-                        })
+                if (task.dateTime <= Date.now() && durationMins > Date.now()) {
+                    if (task.status != 'In progress') {
+                        await task.updateOne({ status: 'In progress' })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    }
+                } else if (durationMins <= Date.now()) {
+                    if (task.status != 'Overdue') {
+                        await task.updateOne({ status: 'Overdue' })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    }
+                } else if (task.dateTime >= Date.now()) {
+                    if (task.status != 'Upcoming') {
+                        await task.updateOne({ status: 'Upcoming' })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    }
                 }
             }
-        }
 
-    })
+        })
+    }
+    if (subTasks) {
+        subTasks.forEach(async subTask => {
+            let durationMins;
+            subTask.duration.split(' ')[1] == 'mins' ?
+                durationMins = moment(subTask.dateTime).add(subTask.duration.split(' ')[0], 'm').toDate() :
+                subTask.duration.split(' ')[1] == 'hrs' ?
+                    durationMins = moment(subTask.dateTime).add(subTask.duration.split(' ')[0], 'h').toDate() : 0
+
+            if (subTask.status != "Done" && subTask.status != "Canceled") {
+
+                if (subTask.dateTime <= Date.now() && durationMins > Date.now()) {
+
+                    if (subTask.status != 'In progress') {
+                        await subTask.updateOne({ status: 'In progress' })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    }
+                } else if (durationMins <= Date.now()) {
+                    if (subTask.status != 'Overdue') {
+                        await subTask.updateOne({ status: 'Overdue' })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    }
+                } else if (subTask.dateTime >= Date.now()) {
+                    if (subTask.status != 'Upcoming') {
+                        await subTask.updateOne({ status: 'Upcoming' })
+                            .catch((err) => {
+                                console.log(err);
+                            })
+                    }
+                }
+            }
+
+        })
+    }
 }
 
 

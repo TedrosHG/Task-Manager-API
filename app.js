@@ -41,7 +41,7 @@ const specs = swaggerJsDoc(options)
 // call express function
 const app = express()
 
-schedule.scheduleJob('*/1 * * * *', statusSchedule)
+
 
 const publicVapidKey = process.env.PUBLIC_KEYS
 const privateVapidKey = process.env.PRIVATE_KEYS
@@ -90,6 +90,7 @@ const port = process.env.PORT || 3000
 const start = async () => {
     try {
         await connectDB(process.env.MONGO_URL);
+        schedule.scheduleJob('*/1 * * * *', statusSchedule) 
         app.listen(port, () => {
             console.log(`Server is listening on port ${port}...`)
         });
