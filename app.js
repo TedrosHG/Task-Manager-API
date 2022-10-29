@@ -7,6 +7,7 @@ const swaggerUI = require("swagger-ui-express")
 const swaggerJsDoc = require('swagger-jsdoc') 
 const schedule = require('node-schedule')
 const webPush = require('web-push')
+const bodyParser = require('body-parser')
 
 
 // import files from other folders
@@ -23,13 +24,13 @@ const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "Todo App",
+            title: "TooDoo App",
             version: "1.0.0",
             description: "A Todo task App API"
         },
         servers: [
             {
-                url: "http://localhost:5000/api/taskManager"
+                url: "http://localhost:5000/api/TooDoo"
             }
         ],        
     },
@@ -43,21 +44,28 @@ const app = express()
 
 
 
-const publicVapidKey = process.env.PUBLIC_KEYS
-const privateVapidKey = process.env.PRIVATE_KEYS
+// const publicVapidKey = process.env.PUBLIC_KEYS
+// const privateVapidKey = process.env.PRIVATE_KEYS
 
-webPush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey)
+// webPush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey)
 
 // middleware to use request from body or url
 app.use(express.json());
+app.use(bodyParser.json());
 app.use(cors());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
 
 // Routes
-app.use('/api/taskManager/subscribe', auth, scheduleRouter);
-app.use('/api/taskManager/tasks', auth, taskRouter);
-app.use('/api/taskManager/subTasks', auth, subTaskRouter);
-app.use('/api/taskManager/auth', userRouter);
+app.use('/api/TooDoo/subscribe', auth, scheduleRouter);
+app.use('/api/TooDoo/tasks', auth, taskRouter);
+app.use('/api/TooDoo/subTasks', auth, subTaskRouter);
+app.use('/api/TooDoo/auth', userRouter);
+
+app.get('/', (req, res) => {
+    res.status(200).send(
+        `<h1>Welcome to TooDoo app</h1>
+        <p>To access swagger documentation go to <a href='/api-docs'>api-docs</a>`)
+});
 
 
 
@@ -90,7 +98,7 @@ const port = process.env.PORT || 3000
 const start = async () => {
     try {
         await connectDB(process.env.MONGO_URL);
-        schedule.scheduleJob('*/1 * * * *', statusSchedule) 
+        //schedule.scheduleJob('*/1 * * * *', statusSchedule) 
         app.listen(port, () => {
             console.log(`Server is listening on port ${port}...`)
         });

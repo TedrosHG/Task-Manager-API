@@ -34,17 +34,20 @@ const getAllTasks = async (req, res) => {
                     return res.status(400).json({ errs: errors })
                 })
                 tasks.push(task)
-                 
+
             }
             return res.status(200).json({ tasks })
         })
         .catch((err) => {
-            return res.status(400).json({ errss:err })
+            return res.status(400).json({ errss: err })
         })
 
 }
 const getTask = async (req, res) => {
     console.log('getSingleTask')
+    if (!req.body._id) {
+        return res.status(400).json({ err: 'input id' })
+    }
     await Task.findOne({ user: req.user.userId, _id: req.body._id })
         .then(async (results) => {
             if (!results) {
@@ -53,10 +56,10 @@ const getTask = async (req, res) => {
 
             //check if there is subTask and adding them to their tasks as subTask
             let task = {};
-            
+
             await SubTask.find({ task: results._id }).then((values) => {
                 //console.log(Task.schema.path('duration').enumValues);
-                return res.status(200).json({ task: results, subTasks:values })
+                return res.status(200).json({ task: results, subTasks: values })
 
             }).catch((errors) => {
                 return res.status(400).json({ err: errors })
@@ -78,41 +81,66 @@ const createTask = async (req, res) => {
 
 }
 const updateTaskStatus = async (req, res) => {
-    console.log('updateTaskStatus',req.body)
+    console.log('updateTaskStatus', req.body)
     const { status, _id } = req.body
     // if(status != 'Done' && status != 'Canceled'){
     //     return res.status(404).json({ err: `Only status Done or Canceled can be selected` })
     // }
-    if(!status || !_id){
+    if (!status || !_id) {
         return res.status(400).json({ err: 'input both status and _id' })
     }
-    const task = await Task.findOne({ user: req.user.userId, _id }).catch((err) => {
-        console.log(err.message)
-        return res.status(400).json({ err: err.message })
-    })
-    if (!task) { 
-        console.log(`there is no task with this id`)
-        return res.status(404).json({ err: `there is no task with this id` })
+    await Task.findOne({ user: req.user.userId, _id })
+    .then(async (task) =>{
+        if (!task) {
+            console.log(`there is no task with this id`)
+            return res.status(404).json({ err: `there is no task with this id` })
+        }else{
+    
+        //find subTask and update status if only if the status is canceled
+        if (status == "Canceled") {
+            console.log(task._id)
+            await SubTask.find({ task: task._id })
+                .then((subTasks) => {
+                    if(subTasks){
+                        subTasks.forEach(async subTask => {
+                            if(subTask.status == "In progress" || subTask.status == "Upcoming"){
+                                await subTask.updateOne({ status }).catch((err) => {
+                                    console.log("2",err.message)
+                                    return res.status(400).json({ err: err.message })
+                                })
+                            }
+                        })
+                    }
+                })
+                .catch((err) => {
+                    console.log("3",err.message)
+                    return res.status(400).json({ err: err.message })
+                })
+            
+        }
+        //update task status
+        await task.updateOne({ status }).catch((err) => {
+            console.log("4",err.message)
+            return res.status(400).json({ err: err.message })
+        })
+    
+        return res.status(200).json({ 
+            msg: "status changed successfully"
+        })
     }
- 
-    // // check input status 
-    // if(task.status != "In progress"){
-    //     return res.status(404).json({ err: "you only can change status in 'In progress' status" })
-    // }
-    //update status
-    await task.updateOne({ status }).catch((err) => {
-        console.log(err.message)
+    })
+    .catch((err) => {
+        console.log("1",err.message)
         return res.status(400).json({ err: err.message })
     })
     
-    return res.status(200).json({
-        msg: "status changed successfully"
-    })
-
 
 }
 const deleteTask = async (req, res) => {
-    console.log('deleteTask',req.body)
+    console.log('deleteTask', req.body)
+    if (!req.body._id) {
+        return res.status(400).json({ err: 'input id' })
+    }
     let msg = ''
     const task = await Task.findOne({ user: req.user.userId, _id: req.body._id }).catch((err) => {
         console.log(err.message)
@@ -127,9 +155,9 @@ const deleteTask = async (req, res) => {
             console.log(err.message)
             return res.status(400).json({ err: err.message })
         })
-    if (results.deletedCount>0) {
+    if (results.deletedCount > 0) {
         msg = ' and sub task'
-    } 
+    }
     console.log('there is task')
     await task.remove().then((result) => {
         return res.status(200).json({ msg: `task${msg} deleted successfully` })
@@ -140,8 +168,8 @@ const deleteTask = async (req, res) => {
 
 const editTask = async (req, res) => {
     console.log('editTask')
-    if(req.body._id){
-        return res.status(400).json({ err: 'input taskId' })
+    if (!req.body._id) {
+        return res.status(400).json({ err: 'input id' })
     }
     await Task.findOne({ user: req.user.userId, _id: req.body._id })
         .then(async (result) => {
@@ -157,16 +185,29 @@ const editTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
     console.log('updateTask')
-    if(req.body._id){
+    // check for input
+    if (!req.body._id) {
         return res.status(400).json({ err: 'input id' })
     }
-    await Task.findOneAndUpdate({ user: req.user.userId, _id: req.body._id },{ user: req.user.userId, ...req.body })
-        .then((results) => {
-            return res.status(200).json({ msg: "Task has been successfully updated." })
-        })
-        .catch((err) => {
-            return res.status(400).json({ err: err.errors })
-        })
+    //find task
+    const task = await Task.findOne({ user: req.user.userId, _id: req.body._id }).catch((err) => {
+        console.log(err.message)
+        return res.status(400).json({ err: err.message })
+    })
+    if (!task) {
+        console.log(`there is no task with this id`)
+        return res.status(404).json({ err: `there is no task with this id` })
+    }
+
+    // update task
+    await task.updateOne({ ...req.body }).catch((err) => {
+        console.log(err.message)
+        return res.status(400).json({ err: err.message })
+    })
+
+    return res.status(200).json({
+        msg: "Task has been successfully updated."
+    })
 }
 
 

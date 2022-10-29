@@ -184,10 +184,6 @@ router.route('/').get(getAllTasks)
  *                              type: string
  *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
  *                              default: "30 mins"
- *                          status:
- *                              type: string
- *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
- *                              default: "Upcoming"
  *      responses:
  *          200:
  *              description: The task was created successfully
@@ -208,7 +204,7 @@ router.route('/create').post(createTask)
 /**
  * @swagger
  * /tasks/detail:
- *  get:
+ *  post:
  *      summary: Returns the tasks and subTasks by id
  *      description: Get single task by id
  *      security:
@@ -244,7 +240,7 @@ router.route('/create').post(createTask)
  *          404:
  *              description: The task was not found
  */
-router.route('/detail').get(getTask)
+router.route('/detail').post(getTask)
 
 /**
  * @swagger
@@ -327,7 +323,7 @@ router.route('/updateStatus').patch(updateTaskStatus)
 /**
  * @swagger
  * /tasks/edit:
- *  get:
+ *  post:
  *      summary: edit task by id
  *      description: edit task by id
  *      security:
@@ -361,12 +357,12 @@ router.route('/updateStatus').patch(updateTaskStatus)
  *          401:
  *              description: Authentication failed
  */
-router.route('/edit').get(editTask)
+router.route('/edit').post(editTask)
 
 /**
  * @swagger
  * /tasks/update:
- *  put:
+ *  patch:
  *      summary: update task by id
  *      description: update task by id
  *      security:
@@ -400,7 +396,7 @@ router.route('/edit').get(editTask)
  *          401:
  *              description: Authentication failed
  */
-router.route('/update').put(updateTask)
+router.route('/update').patch(updateTask)
 
 
 module.exports = router

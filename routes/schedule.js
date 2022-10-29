@@ -36,8 +36,6 @@ const router = express.Router()
  *                  schema:
  *                      type: object
  *                      properties:
- *                          method:
- *                              type: string
  *                          body:
  *                              type: string
  *                          headers:

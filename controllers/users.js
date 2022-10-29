@@ -34,7 +34,7 @@ const login = async (req, res) => {
     const { email, password } = req.body
     //console.log(email.toLowerCase())
     //console.log(email.trim())
-    console.log(email,password)
+    console.log(req.body)
     // check require email and password
     if(!email || !password){
         console.log( `please provide all input`)
@@ -42,29 +42,33 @@ const login = async (req, res) => {
     }
 
     // check user with this email
-    const user = await User.findOne({email}).catch((err) => {
+    await User.findOne({email})
+    .then(async (user) => {
+        if(!user){
+            console.log( `Invalid Credentials(email)`)
+            return res.status(400).json({err: `Invalid Credentials`})
+        }
+        // check password
+        const checkPassword = await user.comparePassword(password)
+        .catch((err) => {
+            console.log(err.message)
+        })
+        if(!checkPassword){
+            console.log( `Invalid Credentials(password)`)
+            return res.status(400).json({err: `Invalid Credentials`})
+        }
+    
+        // create token
+        const token = user.createJWT()
+        // send result to front end
+        console.log('login successful')
+        return res.status(200).json({ email:user.email, Token:token })
+    })
+    .catch((err) => {
         console.log(err.message)
         return res.status(400).json({err:err.message})
     })
-    if(!user){
-        console.log( `Invalid Credentials(email)`)
-        return res.status(400).json({err: `Invalid Credentials`})
-    }
-    // check password
-    const checkPassword = await user.comparePassword(password)
-    .catch((err) => {
-        console.log(err.message)
-    })
-    if(!checkPassword){
-        console.log( `Invalid Credentials(password)`)
-        return res.status(400).json({err: `Invalid Credentials`})
-    }
-
-    // create token
-    const token = user.createJWT()
-    // send result to front end
-    console.log('login successful')
-    return res.status(200).json({ email:user.email, Token:token })
+    
     
 
 }  
@@ -75,56 +79,60 @@ const sendEmail = async(req, res) => {
         return res.status(400).json({err:'Email is required'})
     }
     // check user with this email
-    const user = await User.findOne({ email }).catch((err) => {
+    const user = await User.findOne({ email })
+    .then((user)=> {
+        if(!user){
+            console.log( `there is no user with this email`)
+            return res.status(400).json({err: `there is no user with this email`})
+        }else{
+        //generate four digit number 
+        var code = Math.floor(1000 + Math.random() * 9000);
+     
+        var transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false, // true for 587, false for other ports
+            requireTLS: true,
+        auth: {
+          user: process.env.MY_EMAIL,
+          pass: process.env.MY_PASSWORD
+        }
+      });
+    
+      var mailOptions = {
+        from: process.env.MY_EMAIL,
+        to: req.body.email,
+        subject: 'Reset password for todo app',
+        text:  `Reset password for todo app
+        The code is : ${code}
+        The code will expire in 1 hour.`
+      };
+    
+      transporter.sendMail(mailOptions, async function(error, info){
+        if (error) {
+          console.log(error);
+          return res.status(400).json({error})
+        } else {
+          const vCode = user.createVerificationCode(code);
+          await User.findByIdAndUpdate(user._id,{otp:vCode})
+          .catch((err) => {
+            console.log(err.message,"not send")
+            return res.status(400).json({err:err.message})
+                })
+          console.log('Email sent: ' + info.response);
+          return res.status(200).json({
+            msg:"Email send successfully",
+            email
+        })
+        }
+      }); 
+        }
+    })
+    .catch((err) => {
         console.log(err.message)
         return res.status(400).json({err:err.message})
     })
-    if(!user){
-        console.log( `there is no user with this email`)
-        return res.status(400).json({err: `there is no user with this email`})
-    }else{
-    //generate four digit number 
-    var code = Math.floor(1000 + Math.random() * 9000);
- 
-    var transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false, // true for 587, false for other ports
-        requireTLS: true,
-    auth: {
-      user: process.env.MY_EMAIL,
-      pass: process.env.MY_PASSWORD
-    }
-  });
-
-  var mailOptions = {
-    from: process.env.MY_EMAIL,
-    to: req.body.email,
-    subject: 'Reset password for todo app',
-    text:  `Reset password for todo app
-    The code is : ${code}
-    The code will expire in 1 hour.`
-  };
-
-  transporter.sendMail(mailOptions, async function(error, info){
-    if (error) {
-      console.log(error);
-      return res.status(400).json({error})
-    } else {
-      const vCode = user.createVerificationCode(code);
-      await User.findByIdAndUpdate(user._id,{otp:vCode})
-      .catch((err) => {
-        console.log(err.message,"not send")
-        return res.status(400).json({err:err.message})
-            })
-      console.log('Email sent: ' + info.response);
-      return res.status(200).json({
-        msg:"Email send successfully",
-        email
-    })
-    }
-  }); 
-    }
+    
 }
 
 const checkCode = async(req, res) => {
@@ -180,17 +188,21 @@ const updatePassword = async(req, res) => {
         const salt = await bcrypt.genSalt(10)
         await bcrypt.hash(password, salt)
         .then(async (hashedPassword)=> {
-        const user = await User.findOneAndUpdate({email}, {password:hashedPassword}).catch((err) => {
+        await User.findOneAndUpdate({email}, {password:hashedPassword})
+        .then((user) => {
+            if(!user){
+                console.log( `there is no user with this email`)
+                return res.status(400).json({err: `there is no user with this email`})
+            }
+            return res.status(200).json({
+                msg:"password changed successfully"
+            })
+        })
+        .catch((err) => {
             console.log(err.message)
             return res.status(400).json({err:err.message})
         })
-        if(!user){
-            console.log( `there is no user with this email`)
-            return res.status(400).json({err: `there is no user with this email`})
-        }
-        return res.status(200).json({
-            msg:"password changed successfully"
-        })
+        
     }) 
     
     } catch (err) {

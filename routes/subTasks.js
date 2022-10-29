@@ -100,7 +100,7 @@ const router = express.Router()
  *                  schema:
  *                      type: object
  *                      properties:
- *                          _id:
+ *                          id:
  *                              type: string
  *                          title:
  *                              type: string
@@ -121,10 +121,6 @@ const router = express.Router()
  *                              type: string
  *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
  *                              default: "30 mins"
- *                          status:
- *                              type: string
- *                              enum: ["In progress", "Overdue", "Canceled", "Done", "Upcoming"]
- *                              default: "Upcoming"
  *      responses:
  *          201:
  *              description: The task was created successfully
@@ -221,7 +217,7 @@ router.route('/updateStatus').patch(updateSubTaskStatus)
 /**
  * @swagger
  * /subTasks/edit:
- *  get:
+ *  post:
  *      summary: edit subTask by id
  *      description: edit subTask by id
  *      security:
@@ -255,12 +251,12 @@ router.route('/updateStatus').patch(updateSubTaskStatus)
  *          401:
  *              description: Authentication failed
  */
-router.route('/edit').get(editSubTask)
+router.route('/edit').post(editSubTask)
 
 /**
  * @swagger
  * /subTasks/update:
- *  put:
+ *  patch:
  *      summary: update subTask by id
  *      description: update subTask by id
  *      security:
@@ -294,6 +290,6 @@ router.route('/edit').get(editSubTask)
  *          401:
  *              description: Authentication failed
  */
-router.route('/update').put(updateSubTask)
+router.route('/update').patch(updateSubTask)
 
 module.exports = router
