@@ -4,16 +4,19 @@ const schedule = require('node-schedule')
 const moment = require('moment')
 const webPush = require('web-push')
 
+const publicVapidKey = process.env.PUBLIC_KEYS
+const privateVapidKey = process.env.PRIVATE_KEYS
+
+webPush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey)
+
 
 const reminderSchedule = async (req, res) => {
     console.log('reminder Schedule')
     const subscribe = req.body
-    const publicVapidKey = process.env.PUBLIC_KEYS
-    const privateVapidKey = process.env.PRIVATE_KEYS
-
-    webPush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey)
-
-    schedule.scheduleJob('*/1 * * * *', async () => {
+    
+    //schedule.cancelJob('reminder')
+  
+    schedule.scheduleJob('reminder','*/1 * * * *', async () => {
         console.log('Schedule')
         //console.log(subscribe, req.user.userId)
         let tasks = await Task.find({ user: req.user.userId })
@@ -28,7 +31,7 @@ const reminderSchedule = async (req, res) => {
         if (tasks) {
 
             tasks.forEach(async task => {
-
+ 
                 let remiderMins;
                 task.reminder.split(' ')[1] == 'mins' ?
                     remiderMins = moment(task.dateTime).subtract(task.reminder.split(' ')[0], 'm').toDate() :
@@ -48,11 +51,18 @@ const reminderSchedule = async (req, res) => {
                                 at ${task.dateTime}, and will end in ${task.duration}`,
                             })
                             //console.log(payload) 
-                            webPush.sendNotification(subscribe, payload).catch(err => console.error(err))
-                            await task.updateOne({ reminderStatus: true })
+                            webPush.sendNotification(subscribe, payload)
+                            .then(async result => {
+                                await task.updateOne({ reminderStatus: true })
                                 .catch((err) => {
                                     console.log(err);
                                 })
+                            })
+                            .catch(err => console.error(err))
+                            // await task.updateOne({ reminderStatus: true })
+                            //     .catch((err) => {
+                            //         console.log(err);
+                            //     })
                             
                         }
                     }
@@ -90,11 +100,18 @@ const reminderSchedule = async (req, res) => {
                                              and will end in ${subTask.duration}`,
                                         })
                                        // console.log(payload)
-                                        webPush.sendNotification(subscribe, payload).catch(err => console.error(err))
-                                        await subTask.updateOne({ reminderStatus: true })
+                                        webPush.sendNotification(subscribe, payload)
+                                        .then(async result=> {
+                                           await subTask.updateOne({ reminderStatus: true })
                                             .catch((err) => {
                                                 console.log(err);
-                                            })
+                                            }) 
+                                        })
+                                        .catch(err => console.error(err))
+                                        // await subTask.updateOne({ reminderStatus: true })
+                                        //     .catch((err) => {
+                                        //         console.log(err);
+                                        //     })
 
                                     }
                                 }
