@@ -63,7 +63,7 @@ app.use('/api/TooDoo/auth', userRouter);
 
 app.get('/', (req, res) => {
     res.status(200).send(
-        `<h1>Welcome to TooDoo Task app</h1>
+        `<h1>Welcome to TooDoo Task app API</h1>
         <p>To access swagger documentation go to <a href='/api-docs'>api-docs</a>`)
 });
 

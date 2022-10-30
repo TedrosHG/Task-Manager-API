@@ -17,7 +17,7 @@ const reminderSchedule = async (req, res) => {
     //schedule.cancelJob('reminder')
   
     schedule.scheduleJob('reminder','*/1 * * * *', async () => {
-        console.log('Schedule')
+        //console.log('Schedule')
         //console.log(subscribe, req.user.userId)
         let tasks = await Task.find({ user: req.user.userId })
             .catch((err) => {
@@ -44,7 +44,7 @@ const reminderSchedule = async (req, res) => {
                     
                     if (remiderMins <= new Date(dateNow)) {
                         if (!task.reminderStatus) {
-                            console.log('send tesk')
+                            console.log('send tesk reminder')
                             const payload = JSON.stringify({
                                 title: 'Task Reminder',
                                 body: `task with title: ${task.title} will start 
@@ -59,10 +59,7 @@ const reminderSchedule = async (req, res) => {
                                 })
                             })
                             .catch(err => console.error(err))
-                            // await task.updateOne({ reminderStatus: true })
-                            //     .catch((err) => {
-                            //         console.log(err);
-                            //     })
+                            
                             
                         }
                     }
@@ -93,7 +90,7 @@ const reminderSchedule = async (req, res) => {
 
                                 if (remiderMins <= new Date(dateNow)) {
                                     if (!subTask.reminderStatus) {
-                                        console.log('send sub tesk')
+                                        console.log('send sub tesk reminder')
                                         const payload = JSON.stringify({
                                             title: 'SubTask Reminder',
                                             body: `subTask with title: ${subTask.title} will start at ${subTask.dateTime},
@@ -108,10 +105,7 @@ const reminderSchedule = async (req, res) => {
                                             }) 
                                         })
                                         .catch(err => console.error(err))
-                                        // await subTask.updateOne({ reminderStatus: true })
-                                        //     .catch((err) => {
-                                        //         console.log(err);
-                                        //     })
+                                        
 
                                     }
                                 }
@@ -123,7 +117,7 @@ const reminderSchedule = async (req, res) => {
                                         })
                                 }
                             }
-                            //console.log('sub')
+                            
                         }
                     })
                     .catch((err) => {
