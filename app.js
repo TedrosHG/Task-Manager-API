@@ -24,9 +24,9 @@ const options = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "TooDoo App",
+            title: "TooDoo Task App",
             version: "1.0.0",
-            description: "A Todo task App API"
+            description: "A TooDoo task App API"
         },
         servers: [
             {
@@ -63,7 +63,7 @@ app.use('/api/TooDoo/auth', userRouter);
 
 app.get('/', (req, res) => {
     res.status(200).send(
-        `<h1>Welcome to TooDoo app</h1>
+        `<h1>Welcome to TooDoo Task app</h1>
         <p>To access swagger documentation go to <a href='/api-docs'>api-docs</a>`)
 });
 
