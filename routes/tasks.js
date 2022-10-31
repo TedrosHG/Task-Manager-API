@@ -96,7 +96,7 @@ const router = express.Router()
  * @swagger
  * /tasks:
  *  get:
- *      summary: Returns the list of all the tasks and subTasks
+ *      summary: Get all tasks
  *      description: Returns the list of all the tasks and subTasks
  *      security:
  *          -   BearerAuth: []
@@ -150,7 +150,7 @@ router.route('/').get(getAllTasks)
  * /tasks/create:
  *  post:
  *      summary: create task
- *      description: create task
+ *      description: creating task by providing the below request body input 
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -205,8 +205,8 @@ router.route('/create').post(createTask)
  * @swagger
  * /tasks/detail:
  *  post:
- *      summary: Returns the tasks and subTasks by id
- *      description: Get single task by id
+ *      summary: Detail Single Task
+ *      description:  Returns the single task and itd subTasks
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -246,8 +246,8 @@ router.route('/detail').post(getTask)
  * @swagger
  * /tasks/delete:
  *  delete:
- *      summary: delete the task by id
- *      description: delete the task by id
+ *      summary: Delete Task
+ *      description: delete the task amd its subTasks if it have
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -278,8 +278,8 @@ router.route('/delete').delete(deleteTask)
  * @swagger
  * /tasks/updateStatus:
  *  patch:
- *      summary: change task status
- *      description: change task status
+ *      summary: Change Task Status
+ *      description: you change the status of a task by its task id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -324,8 +324,8 @@ router.route('/updateStatus').patch(updateTaskStatus)
  * @swagger
  * /tasks/edit:
  *  post:
- *      summary: edit task by id
- *      description: edit task by id
+ *      summary: Edit Task
+ *      description: return the task to be edit the task by task id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]
@@ -363,8 +363,8 @@ router.route('/edit').post(editTask)
  * @swagger
  * /tasks/update:
  *  patch:
- *      summary: update task by id
- *      description: update task by id
+ *      summary: Update Task
+ *      description: update the given task by task id
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]

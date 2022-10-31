@@ -44,7 +44,8 @@ const router = express.Router()
  * @swagger
  * /auth/register:
  *  post:
- *      summary: register user
+ *      summary: Register User
+ *      description: user can register by providing the below input
  *      tags: [Users]
  *      requestBody:
  *          required: true
@@ -87,7 +88,8 @@ router.post('/register', register)
  * @swagger
  * /auth/login:
  *  post:
- *      summary: login user
+ *      summary: Login User
+ *      description: user can sign in by providing the below input
  *      tags: [Users]
  *      requestBody:
  *          required: true
@@ -130,7 +132,8 @@ router.post('/login', login)
  * @swagger
  * /auth/forgetPassword:
  *  post:
- *      summary: forget password
+ *      summary: Forget Password
+ *      description: user can reset its password by providing the below input
  *      tags: [Users]
  *      requestBody:
  *          required: true
@@ -170,7 +173,8 @@ router.post('/forgetPassword', sendEmail)
  * @swagger
  * /auth/verifyCode:
  *  post:
- *      summary: verify code that have been send to email
+ *      summary: Verify Code
+ *      description: verify code that have been send to email
  *      tags: [Users]
  *      requestBody:
  *          required: true
@@ -214,7 +218,8 @@ router.post('/verifyCode/', checkCode)
  * @swagger
  * /auth/newPassword:
  *  patch:
- *      summary: change new password
+ *      summary: Update Password
+ *      description: update user password by providing new password after verifying the code that have been send to email.
  *      tags: [Users]
  *      requestBody:
  *          required: true

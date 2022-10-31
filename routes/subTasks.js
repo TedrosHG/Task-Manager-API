@@ -88,8 +88,8 @@ const router = express.Router()
  * @swagger
  * /subTasks/create:
  *  post:
- *      summary: create sub task
- *      description: create sub task
+ *      summary: Create SubTask
+ *      description: creating subTask by providing the below request body input 
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -142,8 +142,8 @@ router.route('/create').post(createSubTask)
  * @swagger
  * /subTasks/delete:
  *  delete:
- *      summary: delete the subTask by id
- *      description: delete the subTask by id
+ *      summary: delete SubTask 
+ *      description: delete the subTask by its subTask id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -172,8 +172,8 @@ router.route('/delete').delete(deleteSubTask)
  * @swagger
  * /subTasks/updateStatus:
  *  patch:
- *      summary: change subTask status
- *      description: change subTask status
+ *      summary: Change SubTask Status
+ *      description: you change the status of a subTask by its subTask id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -218,8 +218,8 @@ router.route('/updateStatus').patch(updateSubTaskStatus)
  * @swagger
  * /subTasks/edit:
  *  post:
- *      summary: edit subTask by id
- *      description: edit subTask by id
+ *      summary: Edit SubTask
+ *      description: return the subTask to be edit the subTask by subTask id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]
@@ -257,8 +257,8 @@ router.route('/edit').post(editSubTask)
  * @swagger
  * /subTasks/update:
  *  patch:
- *      summary: update subTask by id
- *      description: update subTask by id
+ *      summary: Update SubTask
+ *      description: update the given subTask by subTask id
  *      security:
  *          -   BearerAuth: []
  *      tags: [SubTasks]

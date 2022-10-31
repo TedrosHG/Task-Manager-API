@@ -24,8 +24,8 @@ const router = express.Router()
  * @swagger
  * /subscribe:
  *  post:
- *      summary: push reminder notification
- *      description: push reminder notification
+ *      summary: Push Reminder Notification
+ *      description: send push reminder notification every one minute after user sends subscribe route
  *      security:
  *          -   BearerAuth: []
  *      tags: [Reminder]
