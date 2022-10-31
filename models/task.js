@@ -22,7 +22,7 @@ const TaskSchema = new mongoose.Schema({
     duration: {
         type: String,
         required: true,
-        enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"],
+        enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs","24 hrs"],
         default: "30 mins",
     },
     category: {

@@ -46,7 +46,7 @@ const router = express.Router()
  *                  description: The task starting date time
  *              duration:
  *                  type: string
- *                  enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"] 
+ *                  enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs","24 hrs"] 
  *                  default: "30 mins"
  *                  description: The task duration
  *              category:
@@ -170,7 +170,7 @@ router.route('/').get(getAllTasks)
  *                              format: date
  *                          duration:
  *                              type: string
- *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"] 
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs","24 hrs"] 
  *                              default: "30 mins"
  *                          category:
  *                              type: string
@@ -373,7 +373,33 @@ router.route('/edit').post(editTask)
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/task'
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
+ *                          title:
+ *                              type: string
+ *                          note:
+ *                              type: string
+ *                          category:
+ *                              type: string
+ *                              enum: ["Work", "Family", "Education", "Shopping", "Others"]
+ *                              default: "Others"
+ *                          dateTime:
+ *                              type: string
+ *                              format: date
+ *                          duration:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs","24 hrs"] 
+ *                              default: "30 mins"
+ *                          priority:
+ *                              type: integer
+ *                              enum: [1, 2, 3, 4, 5]
+ *                              default: 1
+ *                          reminder:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
+ *                              default: "30 mins"
  *      responses:
  *          200:
  *              description: task updated successfully

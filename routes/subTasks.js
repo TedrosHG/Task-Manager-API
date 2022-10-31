@@ -267,7 +267,29 @@ router.route('/edit').post(editSubTask)
  *          content:
  *              application/json:
  *                  schema:
- *                      $ref: '#/components/schemas/subTask'
+ *                      type: object
+ *                      properties:
+ *                          _id:
+ *                              type: string
+ *                          title:
+ *                              type: string
+ *                          note:
+ *                              type: string
+ *                          dateTime:
+ *                              type: string
+ *                              format: date
+ *                          duration:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs"] 
+ *                              default: "30 mins"
+ *                          priority:
+ *                              type: integer
+ *                              enum: [1, 2, 3, 4, 5]
+ *                              default: 1
+ *                          reminder:
+ *                              type: string
+ *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
+ *                              default: "30 mins"
  *      responses:
  *          200:
  *              description: subTask updated successfully

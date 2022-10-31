@@ -66,20 +66,20 @@ const router = express.Router()
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          email:
- *                              type: string
- *                          Token:
- *                              type: string
+ *                          properties:
+ *                              email:
+ *                                  type: string
+ *                              Token:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string
+ *                          properties:
+ *                              err:
+ *                                  type: string
  */
 router.post('/register', register)
 
@@ -109,20 +109,20 @@ router.post('/register', register)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          email:
- *                              type: string
- *                          Token:
- *                              type: string
+ *                          properties:
+ *                              email:
+ *                                  type: string
+ *                              Token:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string
+ *                          properties:
+ *                              err:
+ *                                  type: string
  */
 router.post('/login', login)
 
@@ -149,20 +149,20 @@ router.post('/login', login)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          msg:
- *                              type: string
- *                          email:
- *                              type: string
+ *                          properties:
+ *                              msg:
+ *                                  type: string
+ *                              email:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string
+ *                          properties:
+ *                              err:
+ *                                  type: string
  */
 router.post('/forgetPassword', sendEmail)
 
@@ -183,8 +183,9 @@ router.post('/forgetPassword', sendEmail)
  *                              type: string
  *                              format: email
  *                          code:
- *                              type: integer
- *                              length: 4
+ *                              type: string
+ *                              minLength: 4
+ *                              maxLength: 4
  *      responses:
  *          200:
  *              description: Email send successfully
@@ -192,20 +193,20 @@ router.post('/forgetPassword', sendEmail)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          msg:
- *                              type: string
- *                          Token:
- *                              type: string
+ *                          properties:
+ *                              msg:
+ *                                  type: string
+ *                              Token:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string
+ *                          properties:
+ *                              err:
+ *                                  type: string
  */
 router.post('/verifyCode/', checkCode)
 
@@ -237,18 +238,18 @@ router.post('/verifyCode/', checkCode)
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          msg:
- *                              type: string
+ *                          properties:
+ *                              msg:
+ *                                  type: string
  *          400:
  *              description: Something went wrong
  *              content:
  *                  application/json:
  *                      schema:
  *                          type: object
- *                      properties:
- *                          err:
- *                              type: string
+ *                          properties:
+ *                              err:
+ *                                  type: string
  */
 router.patch('/newPassword/', updatePassword)
 
