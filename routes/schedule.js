@@ -37,9 +37,7 @@ const router = express.Router()
  *                      type: object
  *                      properties:
  *                          body:
- *                              type: string
- *                          headers:
- *                              type: object    
+ *                              type: string  
  *      responses:
  *          200:
  *              description: The task was created successfully
