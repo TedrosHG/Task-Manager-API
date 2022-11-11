@@ -11,6 +11,7 @@ const bodyParser = require('body-parser')
 
 
 // import files from other folders
+const notificationRouter = require('./routes/notification')
 const userRouter = require('./routes/users')
 const taskRouter = require('./routes/tasks')
 const subTaskRouter = require('./routes/subTasks')
@@ -57,6 +58,7 @@ app.use(cors());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
 
 // Routes
+app.use('/api/TooDoo/notification', auth, notificationRouter);
 app.use('/api/TooDoo/subscribe', auth, scheduleRouter);
 app.use('/api/TooDoo/tasks', auth, taskRouter);
 app.use('/api/TooDoo/subTasks', auth, subTaskRouter);

@@ -103,7 +103,7 @@ const router = express.Router()
  *      tags: [Tasks]
  *      responses:
  *          200:
- *              description: The list of all the tasks and sunTasks
+ *              description: The list of all the tasks and subTasks
  *              content:
  *                  application/json:
  *                      schema:
@@ -233,7 +233,7 @@ router.route('/create').post(createTask)
  * /tasks/detail:
  *  post:
  *      summary: Detail Single Task
- *      description:  Returns the single task and itd subTasks
+ *      description:  Returns the single task and it's subTasks
  *      security:
  *          -   BearerAuth: []
  *      tags: [Tasks]

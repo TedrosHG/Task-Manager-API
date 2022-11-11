@@ -95,12 +95,41 @@ const notification = async (req, res) => {
         })
     }
 
-
-
-
 }
 
+const notify = async (req, res) => {
+    await Notification.find({ user: req.user.userId })
+    .then(async (results) => {
+        return res.status(200).json({ notification: results })
+    })
+    .catch((err) => {
+        return res.status(400).json({ errss: err })
+    })
+}
+ 
+const deleteNotification = async (req, res) => {
+    if(!req.body._id){
+        return res.status(400).json({ msg: "enter id of notification" })
+    }
+    await Notification.findOne({ user: req.user.userId, _id: req.body._id })
+    .then(async (notification) => {
+        if (!notification) {
+            return res.status(404).json({ err: `there is no notification with this id` })
+        } else {
+            await notification.remove().then((result) => {
+                return res.status(200).json({ msg: `notification deleted successfully` })
+            }).catch((error) => {
+                return res.status(500).json({ err: error.message })
+            })
+        }
+    })
+    .catch((err) => {
+        return res.status(400).json({ err: err.message })
+    })
+}
 
 module.exports = {
-    notification
+    notification,
+    notify,
+    deleteNotification
 }

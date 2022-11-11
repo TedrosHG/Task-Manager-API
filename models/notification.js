@@ -13,7 +13,6 @@ const NotificationSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        required: true,
         enum: ["Overdue","Upcoming"],
         default: "Upcoming",
     },
