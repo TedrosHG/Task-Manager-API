@@ -161,29 +161,56 @@ router.route('/').get(getAllTasks)
  *                  schema:
  *                      type: object
  *                      properties:
- *                          title:
- *                              type: string
- *                          note:
- *                              type: string
- *                          dateTime:
- *                              type: string
- *                              format: date
- *                          duration:
- *                              type: string
- *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs","24 hrs"] 
- *                              default: "30 mins"
- *                          category:
- *                              type: string
- *                              enum: ["Work", "Family", "Education", "Shopping", "Others"]
- *                              default: "Others"
- *                          priority:
- *                              type: integer
- *                              enum: [1, 2, 3, 4, 5]
- *                              default: 1
- *                          reminder:
- *                              type: string
- *                              enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
- *                              default: "30 mins"
+ *                          task:
+ *                              type: object
+ *                              properties:
+ *                                  title:
+ *                                      type: string
+ *                                  note:
+ *                                      type: string
+ *                                  dateTime:
+ *                                      type: string
+ *                                      format: date
+ *                                  duration:
+ *                                      type: string
+ *                                      enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs","24 hrs"] 
+ *                                      default: "30 mins"
+ *                                  category:
+ *                                      type: string
+ *                                      enum: ["Work", "Family", "Education", "Shopping", "Others"]
+ *                                      default: "Others"
+ *                                  priority:
+ *                                      type: integer
+ *                                      enum: [1, 2, 3, 4, 5]
+ *                                      default: 1
+ *                                  reminder:
+ *                                      type: string
+ *                                      enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
+ *                                      default: "30 mins"
+ *                          subTask:
+ *                              type: array
+ *                              items:
+ *                                  type: object
+ *                                  properties:
+ *                                      title:
+ *                                          type: string
+ *                                      note:
+ *                                          type: string
+ *                                      dateTime:
+ *                                          type: string
+ *                                          format: date
+ *                                      duration:
+ *                                          type: string
+ *                                          enum: ["15 mins", "30 mins", "1 hrs", "2 hrs","6 hrs","12 hrs","24 hrs"] 
+ *                                          default: "30 mins"
+ *                                      priority:
+ *                                          type: integer
+ *                                          enum: [1, 2, 3, 4, 5]
+ *                                          default: 1
+ *                                      reminder:
+ *                                          type: string
+ *                                          enum: ["15 mins", "30 mins", "1 hrs", "2 hrs"]
+ *                                          default: "30 mins"
  *      responses:
  *          200:
  *              description: The task was created successfully

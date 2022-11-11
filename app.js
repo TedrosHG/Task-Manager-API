@@ -17,7 +17,8 @@ const subTaskRouter = require('./routes/subTasks')
 const connectDB = require('./db/connect')
 const auth = require('./middleware/authentication')
 const scheduleRouter = require('./routes/schedule')
-const { statusSchedule } = require('./controllers/schedule')
+const { statusSchedule } = require('./controllers/schedule');
+const { notification } = require('./controllers/notification');
 
 // swagger
 const options = {
@@ -99,6 +100,7 @@ const start = async () => {
     try {
         await connectDB(process.env.MONGO_URL);
         //schedule.scheduleJob('*/1 * * * *', statusSchedule) 
+        schedule.scheduleJob('*/1 * * * *', notification) 
         app.listen(port, () => {
             console.log(`Server is listening on port ${port}...`)
         });

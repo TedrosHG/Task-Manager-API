@@ -1,5 +1,6 @@
 const Task = require('../models/task')
 const SubTask = require('../models/subTask')
+const Notification = require('../models/notification')
 
 const getAllTasks = async (req, res) => {
     console.log('getAllTask')
@@ -70,10 +71,38 @@ const getTask = async (req, res) => {
         })
 }
 const createTask = async (req, res) => {
-    console.log('createTask')
-    await Task.create({ user: req.user.userId, ...req.body })
-        .then((results) => {
-            return res.status(201).json({ msg: "Task has been successfully created." })
+    console.log('createTask', req.body)
+
+    await Task.create({ user: req.user.userId, ...req.body.task })
+        .then(async (results) => {
+            if (req.body.subTask != '') {
+                subTasks = []
+                req.body.subTask.forEach(async subtask => {
+                    subTask = {}
+                    subTask.task = results._id
+                    subTask.title = subtask.title
+                    subTask.note = subtask.note
+                    subTask.dateTime = subtask.dateTime
+                    subTask.duration = subtask.duration
+                    subTask.priority = subtask.priority
+                    subTask.reminder = subtask.reminder
+
+                    subTasks.push(subTask)
+                })
+                try {
+                    await SubTask.insertMany(subTasks)
+                    return res.status(201).json({ msg: "Task and sub task has been successfully created." })
+                } catch (error) {
+                    //await Task.findByIdAndDelete(results._id)
+                    await results.remove()
+                    return res.status(400).json({ err: error.errors })
+                }
+
+
+
+            } else {
+                return res.status(201).json({ msg: "Task has been successfully created.", results })
+            }
         })
         .catch((err) => {
             return res.status(400).json({ err: err.errors })
@@ -83,57 +112,65 @@ const createTask = async (req, res) => {
 const updateTaskStatus = async (req, res) => {
     console.log('updateTaskStatus', req.body)
     const { status, _id } = req.body
-    // if(status != 'Done' && status != 'Canceled'){
-    //     return res.status(404).json({ err: `Only status Done or Canceled can be selected` })
-    // }
     if (!status || !_id) {
         return res.status(400).json({ err: 'input both status and _id' })
     }
     await Task.findOne({ user: req.user.userId, _id })
-    .then(async (task) =>{
-        if (!task) {
-            console.log(`there is no task with this id`)
-            return res.status(404).json({ err: `there is no task with this id` })
-        }else{
-    
-        //find subTask and update status if only if the status is canceled
-        if (status == "Canceled") {
-            console.log(task._id)
-            await SubTask.find({ task: task._id })
-                .then((subTasks) => {
-                    if(subTasks){
-                        subTasks.forEach(async subTask => {
-                            if(subTask.status == "In progress" || subTask.status == "Upcoming"){
-                                await subTask.updateOne({ status }).catch((err) => {
-                                    console.log("2",err.message)
-                                    return res.status(400).json({ err: err.message })
+        .then(async (task) => {
+            if (!task) {
+                console.log(`there is no task with this id`)
+                return res.status(404).json({ err: `there is no task with this id` })
+            } else {
+
+                //find subTask and update status if only if the status is canceled
+                if (status == "Canceled") {
+                    console.log(task._id)
+                    await SubTask.find({ task: task._id })
+                        .then((subTasks) => {
+                            if (subTasks) {
+                                subTasks.forEach(async subTask => {
+                                    if (subTask.status == "In progress" || subTask.status == "Upcoming") {
+                                        await subTask.updateOne({ status }).catch((err) => {
+                                            console.log("2", err.message)
+                                            return res.status(400).json({ err: err.message })
+                                        })
+                                    }
                                 })
                             }
                         })
-                    }
-                })
-                .catch((err) => {
-                    console.log("3",err.message)
-                    return res.status(400).json({ err: err.message })
-                })
-            
-        }
-        //update task status
-        await task.updateOne({ status }).catch((err) => {
-            console.log("4",err.message)
+                        .catch((err) => {
+                            console.log("3", err.message)
+                            return res.status(400).json({ err: err.message })
+                        })
+
+                }
+                //update task status
+                await task.updateOne({ status })
+                    .then(async result => {
+                        // send notification for Overdue status
+                        if (status == 'Overdue') {
+                            await Notification.create({ user: req.user.userId, title: task.title, status })
+                                .catch((err) => {
+                                    console.log("notification error ", err);
+                                })
+                        }
+                        return res.status(200).json({
+                            msg: "status changed successfully"
+                        })
+                    })
+                    .catch((err) => {
+                        console.log("4", err.message)
+                        return res.status(400).json({ err: err.message })
+                    })
+
+
+            }
+        })
+        .catch((err) => {
+            console.log("1", err.message)
             return res.status(400).json({ err: err.message })
         })
-    
-        return res.status(200).json({ 
-            msg: "status changed successfully"
-        })
-    }
-    })
-    .catch((err) => {
-        console.log("1",err.message)
-        return res.status(400).json({ err: err.message })
-    })
-    
+
 
 }
 const deleteTask = async (req, res) => {
@@ -142,28 +179,34 @@ const deleteTask = async (req, res) => {
         return res.status(400).json({ err: 'input id' })
     }
     let msg = ''
-    const task = await Task.findOne({ user: req.user.userId, _id: req.body._id }).catch((err) => {
-        console.log(err.message)
-        return res.status(400).json({ err: err.message })
-    })
-    if (!task) {
-        console.log(`there is no task with this id`)
-        return res.status(404).json({ err: `there is no task with this id` })
-    }
-    const results = await SubTask.deleteMany({ task: task._id })
+    await Task.findOne({ user: req.user.userId, _id: req.body._id })
+        .then(async (task) => {
+            if (!task) {
+                console.log(`there is no task with this id`)
+                return res.status(404).json({ err: `there is no task with this id` })
+            } else {
+                const results = await SubTask.deleteMany({ task: task._id })
+                    .catch((err) => {
+                        console.log(err.message)
+                        return res.status(400).json({ err: err.message })
+                    })
+                if (results.deletedCount > 0) {
+                    msg = ' and sub task'
+                }
+                console.log('there is task')
+                await task.remove().then((result) => {
+                    return res.status(200).json({ msg: `task${msg} deleted successfully` })
+                }).catch((error) => {
+                    return res.status(500).json({ err: error.message })
+                })
+            }
+        })
         .catch((err) => {
             console.log(err.message)
             return res.status(400).json({ err: err.message })
         })
-    if (results.deletedCount > 0) {
-        msg = ' and sub task'
-    }
-    console.log('there is task')
-    await task.remove().then((result) => {
-        return res.status(200).json({ msg: `task${msg} deleted successfully` })
-    }).catch((error) => {
-        return res.status(500).json({ err: error.message })
-    })
+
+
 }
 
 const editTask = async (req, res) => {
@@ -190,24 +233,32 @@ const updateTask = async (req, res) => {
         return res.status(400).json({ err: 'input id' })
     }
     //find task
-    const task = await Task.findOne({ user: req.user.userId, _id: req.body._id }).catch((err) => {
-        console.log(err.message)
-        return res.status(400).json({ err: err.message })
-    })
-    if (!task) {
-        console.log(`there is no task with this id`)
-        return res.status(404).json({ err: `there is no task with this id` })
-    }
+    const task = await Task.findOne({ user: req.user.userId, _id: req.body._id })
+        .then(async (task) => {
+            if (!task) {
+                console.log(`there is no task with this id`)
+                return res.status(404).json({ err: `there is no task with this id` })
+            }
 
-    // update task
-    await task.updateOne({ ...req.body }).catch((err) => {
-        console.log(err.message)
-        return res.status(400).json({ err: err.message })
-    })
+            // update task
+            await task.updateOne({ ...req.body })
+                .then(async (result) => {
+                    return res.status(200).json({
+                        msg: "Task has been successfully updated."
+                    })
+                })
+                .catch((err) => {
+                    console.log(err.message)
+                    return res.status(400).json({ err: err.message })
+                })
+        })
+        .catch((err) => {
+            console.log(err.message)
+            return res.status(400).json({ err: err.message })
+        })
 
-    return res.status(200).json({
-        msg: "Task has been successfully updated."
-    })
+
+
 }
 
 

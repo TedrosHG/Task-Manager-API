@@ -30,6 +30,29 @@ const router = express.Router()
  *              otp:
  *                  type: string
  *                  description: The forget password otp
+ *              fullName:
+ *                  type: string
+ *                  description: The full name of the user
+ *              phoneNumber:
+ *                  type: string
+ *                  description: The forget password otp
+ *              gender:
+ *                  type: string
+ *                  description: The gender of the user
+ *              DoB:
+ *                  type: string
+ *                  format: date
+ *                  description: The date of birth
+ *              img:
+ *                  type: string
+ *                  description: The profile image
+ *              status:
+ *                  type: boolean
+ *                  description: The status of the account active or inactive
+ *              reason:
+ *                  type: string
+ *                  description: The reason for deleting the account
+ * 
  * 
  */
 

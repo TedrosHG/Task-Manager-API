@@ -20,8 +20,30 @@ const UserSchema = new mongoose.Schema({
         minlength: 8,
     },
     otp:{
-        type: String,
-        
+        type: String,   
+    },
+    fullName:{
+        type: String,   
+    },
+    phoneNumber:{
+        type: String,   
+    },
+    gender:{
+        type: String, 
+        enum: ["Male", "Female", ""],
+        default: "",  
+    },
+    DoB:{
+        type: Date,   
+    },
+    img:{
+        type: String,   
+    },
+    status:{
+        type: Boolean,   
+    },
+    reason:{
+        type: String,   
     }
 
 })

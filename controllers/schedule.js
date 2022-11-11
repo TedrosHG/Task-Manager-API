@@ -47,8 +47,7 @@ const reminderSchedule = async (req, res) => {
                             console.log('send tesk reminder')
                             const payload = JSON.stringify({
                                 title: 'Task Reminder',
-                                body: `task with title: ${task.title} will start 
-                                at ${task.dateTime}, and will end in ${task.duration}`,
+                                body: `task with title: ${task.title} will start in ${task.reminder}`,
                             })
                             //console.log(payload) 
                             webPush.sendNotification(subscribe, payload)
@@ -93,8 +92,7 @@ const reminderSchedule = async (req, res) => {
                                         console.log('send sub tesk reminder')
                                         const payload = JSON.stringify({
                                             title: 'SubTask Reminder',
-                                            body: `subTask with title: ${subTask.title} will start at ${subTask.dateTime},
-                                             and will end in ${subTask.duration}`,
+                                            body: `subTask with title: ${subTask.title} will start in ${subTask.reminder}`,
                                         })
                                        // console.log(payload)
                                         webPush.sendNotification(subscribe, payload)
@@ -219,9 +217,8 @@ const statusSchedule = async (req, res) => {
 
 
 
+
 module.exports = {
     reminderSchedule,
     statusSchedule,
 }
-
-// number count down in javascript?
