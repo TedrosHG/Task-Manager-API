@@ -70,7 +70,7 @@ const getProfile = async (req, res) => {
                 phoneNumber:user.phoneNumber, 
                 gender:user.gender, 
                 DoB:user.DoB, 
-                img:user.img == "" ? "":`http://localhost:5000/profileImage/${user.img}` 
+                img:user.img == "" ? "":`https://too-doo-task.herokuapp.com/profileImage/${user.img}` 
             })
              }
     })
