@@ -15,6 +15,7 @@ const notificationRouter = require('./routes/notification')
 const userRouter = require('./routes/users')
 const taskRouter = require('./routes/tasks')
 const subTaskRouter = require('./routes/subTasks')
+const profileRouter = require('./routes/profile')
 const connectDB = require('./db/connect')
 const auth = require('./middleware/authentication')
 const scheduleRouter = require('./routes/schedule')
@@ -58,6 +59,7 @@ app.use(cors());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
 
 // Routes
+app.use('/api/TooDoo/profile', auth, profileRouter);
 app.use('/api/TooDoo/notification', auth, notificationRouter);
 app.use('/api/TooDoo/subscribe', auth, scheduleRouter);
 app.use('/api/TooDoo/tasks', auth, taskRouter);

@@ -6,7 +6,6 @@ const UserSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'Please provide Email address'],
-        unique: true,
         trim:true,
         lowercase:true,
         match: [
@@ -20,13 +19,16 @@ const UserSchema = new mongoose.Schema({
         minlength: 8,
     },
     otp:{
-        type: String,   
+        type: String,
+        default: "",   
     },
     fullName:{
-        type: String,   
+        type: String,
+        default: "",   
     },
     phoneNumber:{
-        type: String,   
+        type: String,
+        default: "",   
     },
     gender:{
         type: String, 
@@ -34,13 +36,16 @@ const UserSchema = new mongoose.Schema({
         default: "",  
     },
     DoB:{
-        type: Date,   
+        type: Date, 
+        default: "",  
     },
     img:{
-        type: String,   
+        type: String,
+        default: "",   
     },
     status:{
-        type: Boolean,   
+        type: Boolean,
+        default: true,   
     },
     reason:{
         type: String,   
