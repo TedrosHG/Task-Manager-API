@@ -1,4 +1,16 @@
 const User = require('../models/user')
+// const multer = require('multer')
+
+// const storage = multer.diskStorage({
+//     destination: 'uploads/profile/', 
+//     filename: (req,file, cb)=>{
+//         return cb(null, Date.now()+ '_' + file.originalname)
+//     }
+// })
+// const upload = multer({
+//     storage:storage,
+//     limits: { fileSize: 1024*1024*5 }
+// })
 
 const changePassword = async (req, res) => {
     await User.findById(req.user.userId)
@@ -58,7 +70,7 @@ const getProfile = async (req, res) => {
                 phoneNumber:user.phoneNumber, 
                 gender:user.gender, 
                 DoB:user.DoB, 
-                img:user.img 
+                img:user.img == "" ? "":`http://localhost:5000/profileImage/${user.img}` 
             })
              }
     })
@@ -68,20 +80,28 @@ const getProfile = async (req, res) => {
     })
 }
 
-const updateProfile = async (req, res) => {
+const updateProfile =  async (req, res) => {
+    
+    console.log(req.file)
     await User.findById(req.user.userId)
     .then((user) => {
         if (!user) {
             return res.status(400).json({ err: 'sorry, something went wrong. try again' })
         }else{
-            user.updateOne({ ...req.body})
+            let image
+            if(req.file){
+                image = req.file.filename
+            }else{
+                image = user.img
+            }
+            user.updateOne({ img:image , ...req.body})
             .then((result) => {
                 return res.status(200).json({ msg: 'profile has been successfully updated' })
             })
             .catch((err) => {
                 console.log(err.message)
                 return res.status(400).json({ err: err.message })
-            })
+            }) 
         }
     })
     .catch((err) => {

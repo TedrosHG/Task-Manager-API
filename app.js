@@ -10,6 +10,7 @@ const webPush = require('web-push')
 const bodyParser = require('body-parser')
 
 
+
 // import files from other folders
 const notificationRouter = require('./routes/notification')
 const userRouter = require('./routes/users')
@@ -57,7 +58,7 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
-
+app.use("/profileImage", express.static("uploads/profile"))
 // Routes
 app.use('/api/TooDoo/profile', auth, profileRouter);
 app.use('/api/TooDoo/notification', auth, notificationRouter);
@@ -87,11 +88,11 @@ app.use(function(req, res, next) {
 
 // Error handler 
 app.use((err, req, res, next) => {
-    res.status(err.status || 500)
+    res.status(err.status || 400)
     res.json({
         err: {
-            status: err.status || 500,
-            message: err.message
+            status: err.status || 400,
+            msg: err.message
         }
     })
 })  
