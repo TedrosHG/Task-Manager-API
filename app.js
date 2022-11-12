@@ -34,7 +34,7 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:5000/api/TooDoo"
+                url: "https://too-doo-task.herokuapp.com/api/TooDoo"
             }
         ],        
     },
