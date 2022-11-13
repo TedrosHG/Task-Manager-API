@@ -123,7 +123,7 @@ const sendEmail = async (req, res) => {
                 transporter.sendMail(mailOptions, async function (error, info) {
                     if (error) {
                         console.log(error);
-                        return res.status(400).json({ error })
+                        return res.status(400).json({ err:error.message })
                     } else {
                         const vCode = user.createVerificationCode(code);
                         await User.findByIdAndUpdate(user._id, { otp: vCode })

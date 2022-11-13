@@ -20,7 +20,7 @@ const createSubTask = async (req, res) => {
                     return res.status(201).json({ msg: "sub Task has been successfully created." })
                 })
                 .catch((err) => {
-                    return res.status(400).json({ err: err })
+                    return res.status(400).json({ err: err.message })
                 })
         })
         .catch((err) => {
@@ -158,7 +158,7 @@ const updateSubTask = async (req, res) => {
                             return res.status(200).json({ msg: "sub Task has been successfully updated." })
                         })
                         .catch((err) => {
-                            res.status(400).json({ err: err.errors })
+                            res.status(400).json({ err: err.message })
                         })
                 })
                 .catch((error) => {

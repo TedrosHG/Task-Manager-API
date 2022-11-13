@@ -32,7 +32,7 @@ const getAllTasks = async (req, res) => {
 
                     subtasks.push(values)
                 }).catch((errors) => {
-                    return res.status(400).json({ errs: errors })
+                    return res.status(400).json({ errs: errors.message })
                 })
                 tasks.push(task)
 
@@ -40,7 +40,7 @@ const getAllTasks = async (req, res) => {
             return res.status(200).json({ tasks })
         })
         .catch((err) => {
-            return res.status(400).json({ errss: err })
+            return res.status(400).json({ err: err.message })
         })
 
 }
@@ -63,11 +63,11 @@ const getTask = async (req, res) => {
                 return res.status(200).json({ task: results, subTasks: values })
 
             }).catch((errors) => {
-                return res.status(400).json({ err: errors })
+                return res.status(400).json({ err: errors.message })
             })
         })
         .catch((err) => {
-            return res.status(400).json({ err })
+            return res.status(400).json({ err:err.message })
         })
 }
 const createTask = async (req, res) => {
@@ -95,7 +95,7 @@ const createTask = async (req, res) => {
                 } catch (error) {
                     //await Task.findByIdAndDelete(results._id)
                     await results.remove()
-                    return res.status(400).json({ err: error.errors })
+                    return res.status(400).json({ err: error.message })
                 }
 
 
@@ -105,7 +105,7 @@ const createTask = async (req, res) => {
             }
         })
         .catch((err) => {
-            return res.status(400).json({ err: err.errors })
+            return res.status(400).json({ err: err.message })
         })
 
 }

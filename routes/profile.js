@@ -55,7 +55,7 @@ const router = express.Router()
  *                  description: The full name of the user
  *              phoneNumber:
  *                  type: string
- *                  description: The forget password otp
+ *                  description: The phone number of the user
  *              gender:
  *                  type: string
  *                  description: The gender of the user
@@ -65,7 +65,7 @@ const router = express.Router()
  *                  description: The date of birth
  *              img:
  *                  type: string
- *                  description: The profile image
+ *                  description: The name of the profile image
  *              status:
  *                  type: boolean
  *                  description: The status of the account active or inactive
@@ -80,7 +80,7 @@ const router = express.Router()
  * @swagger
  * tags:
  *  name: profiles
- *  description: The users managing API
+ *  description: manage user account or profile
  */
 
 

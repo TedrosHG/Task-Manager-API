@@ -215,7 +215,7 @@ router.post('/forgetPassword', sendEmail)
  *                              maxLength: 4
  *      responses:
  *          200:
- *              description: Email send successfully
+ *              description: code matched successfully
  *              content:
  *                  application/json:
  *                      schema:

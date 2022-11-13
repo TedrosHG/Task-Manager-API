@@ -4,7 +4,7 @@ const Notification = require('../models/notification')
 const moment = require('moment')
 
 const notification = async (req, res) => {
-    console.log('notification')
+    //console.log('notification')
     let listTask = []
     let tasks = await Task.find({})
         .catch((err) => {
