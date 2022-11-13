@@ -226,7 +226,7 @@ router.get('/', getProfile)
  *      requestBody:
  *          required: true
  *          content:
- *              application/json:
+ *              multipart/form-data:
  *                  schema:
  *                      type: object
  *                      properties:
@@ -240,6 +240,7 @@ router.get('/', getProfile)
  *                              type: string
  *                          img:
  *                              type: string
+ *                              format: base64
  *      responses:
  *          200:
  *              description: profile has been updated successfully
