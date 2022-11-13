@@ -71,7 +71,8 @@ const getProfile = async (req, res) => {
 
 const updateProfile =  async (req, res) => {
     
-    console.log(req.file)
+    console.log('request image: ',req.file)
+    console.log('request body: ',req.body)
     await User.findById(req.user.userId)
     .then((user) => {
         if (!user) {
