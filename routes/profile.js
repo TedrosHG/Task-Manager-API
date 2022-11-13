@@ -83,7 +83,14 @@ const router = express.Router()
  *  description: manage user account or profile
  */
 
-
+/**
+ * @swagger
+ * components:
+ *  securitySchemes:
+ *      BearerAuth:
+ *          type: http
+ *          scheme: bearer
+ */
 
 /**
  * @swagger
@@ -91,7 +98,9 @@ const router = express.Router()
  *  patch:
  *      summary: Update Password
  *      description: update user password by providing new password in thier profile
- *      tags: [profiles]
+ *      tags: [profiles] 
+ *      security:
+ *          -   BearerAuth: []
  *      requestBody:
  *          required: true
  *          content:
@@ -130,7 +139,9 @@ router.patch('/changePassword', changePassword)
  *  delete:
  *      summary: Delete Account
  *      description: delete user's account if the user donot need it any more
- *      tags: [profiles]
+ *      tags: [profiles] 
+ *      security:
+ *          -   BearerAuth: []
  *      requestBody:
  *          required: true
  *          content:
@@ -168,7 +179,9 @@ router.patch('/changePassword', changePassword)
  *  get:
  *      summary: Get Profile
  *      description: Return the profile info to be edited
- *      tags: [profiles]
+ *      tags: [profiles] 
+ *      security:
+ *          -   BearerAuth: []
  *      responses:
  *          200:
  *              description: return profile
@@ -207,7 +220,9 @@ router.get('/', getProfile)
  *  patch:
  *      summary: Update Profile
  *      description: update the information for the user in profile
- *      tags: [profiles]
+ *      tags: [profiles] 
+ *      security:
+ *          -   BearerAuth: []
  *      requestBody:
  *          required: true
  *          content:
