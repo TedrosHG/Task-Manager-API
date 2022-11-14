@@ -139,7 +139,7 @@ const editSubTask = async (req, res) => {
 }
 
 const updateSubTask = async (req, res) => {
-    console.log('updateSubTask')
+    console.log('updateSubTask',req.body)
     if (!req.body._id) {
         return res.status(400).json({ err: 'input id' })
     }
