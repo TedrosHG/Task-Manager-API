@@ -250,7 +250,7 @@ const reset = async (req, res) => {
     
                     var mailOptions = {
                         from: process.env.MY_EMAIL,
-                        to: result.email,
+                        to: user.email.slice(5),
                         subject: 'Account has been successfully reactivated',
                         html: `
                         Your account has been successfully reactivated.<br 
