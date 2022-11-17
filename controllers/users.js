@@ -249,7 +249,7 @@ const reset = async (req, res) => {
     
                     var mailOptions = {
                         from: process.env.MY_EMAIL,
-                        to: user.email,
+                        to: result.email,
                         subject: 'Account has been successfully reactivated',
                         html: `
                         Your account has been successfully reactivated.<br> 
