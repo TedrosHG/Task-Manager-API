@@ -281,6 +281,71 @@ router.post('/verifyCode/', checkCode)
  */
 router.patch('/newPassword', newPassword)
 
+/**
+ * @swagger
+ * /auth/verifyCode:
+ *  post:
+ *      summary: Verify Code
+ *      description: verify code that have been send to email
+ *      tags: [Users]
+ *      requestBody:
+ *          required: true
+ *          content:
+ *              application/json:
+ *                  schema:
+ *                      type: object
+ *                      properties:
+ *                          email:
+ *                              type: string
+ *                              format: email
+ *                          code:
+ *                              type: string
+ *                              minLength: 4
+ *                              maxLength: 4
+ *      responses:
+ *          200:
+ *              description: code matched successfully
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              msg:
+ *                                  type: string
+ *                              Token:
+ *                                  type: string
+ *          400:
+ *              description: Something went wrong
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              err:
+ *                                  type: string
+ */
+ router.post('/verifyCode/', checkCode)
+
+ /**
+  * @swagger
+  * /auth/reset/{id}:
+  *  get:
+  *      summary: Reset Account
+  *      description: after the account have been deleted, in the period of 30 minutes you can reset or recover the account
+  *      tags: [Users]
+  *      parameters:
+  *         -   name: id
+  *             in: path
+  *             escription: reset token
+  *             required: true
+  *             schema:
+  *                 type: string
+  *      responses:
+  *          200:
+  *              description: account has been reactivated, and send successful email and redirects to login page
+  *          400:
+  *              description: account deleted permanently, redirects to register page 
+  */
 router.get('/reset/:id', reset)
 
 
