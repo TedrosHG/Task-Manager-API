@@ -254,8 +254,8 @@ const reset = async (req, res) => {
                         subject: 'Account has been successfully reactivated',
                         html: `
                         Your account has been successfully reactivated.<br 
-                        You can sign in using the link below <br>
-                        <a href='https://tooo0doooo.netlify.app/'>Register</a>
+                        You can sign in using the link below <br>,<hr>
+                        <a href='https://tooo0doooo.netlify.app/'>Login</a>
                         `
                     };
     
