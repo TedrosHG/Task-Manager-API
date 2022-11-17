@@ -223,7 +223,76 @@ const newPassword = async (req, res) => {
 
 }
 
+const reset = async (req, res) => {
+    try{
+    const payload = jwt.verify(req.params.id, process.env.JWT_SECRET)
+    console.log(payload);
+    await User.findById(payload.userId)
+        .then(async (user) => {
+            if(!user){
+                return res.json({err:'No user with id'})
+            }else{
+            if(user.email.startsWith("dltd.")){
+                await user.updateOne({ status:true, email:user.email.slice(5) })
+                .then(async (result) => {
+                    
+                    var transporter = nodemailer.createTransport({
+                        host: "smtp.gmail.com",
+                        port: 587,
+                        secure: false, // true for 587, false for other ports
+                        requireTLS: true,
+                        auth: {
+                            user: process.env.MY_EMAIL,
+                            pass: process.env.MY_PASSWORD
+                        }
+                    });
+    
+                    var mailOptions = {
+                        from: process.env.MY_EMAIL,
+                        to: user.email,
+                        subject: 'Account has been successfully reactivated',
+                        html: `
+                        Your account has been successfully reactivated.<br> 
+                        You can sign in using the link below <br>
+                        <a href='https://tooo0doooo.netlify.app/'>Register</a>
+                        `
+                    };
+    
+                    transporter.sendMail(mailOptions, async function (error, info) {
+                        if (error) {
+                            console.log(error);
+                            return res.status(400).json({ err:error.message })
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                            return res.redirect('https://tooo0doooo.netlify.app/');
+                        }
+                    });
+    
+                })
+                .catch((err) => {
+                    console.log(err.message)
+                    return res.status(400).json({ err: err.message })
+                })
+            }else{
+                //return res.json({err:'the account has been reactivated'})
+                res.redirect('https://tooo0doooo.netlify.app/');
+                
+            }
+            
+            }
+        })
+        .catch((err) => {
+            console.log(err.message)
+            return res.status(400).json({ err: err.message })
+        })
+    
+    }catch (error) {
+        //return res.status(401).json({err: "token expired"})
+        return res.redirect('https://tooo0doooo.netlify.app/register');
+        
+    }
+}
 
 
 // Export controller
-module.exports = { register, login, sendEmail, checkCode, newPassword }
+module.exports = { register, login, sendEmail, checkCode, newPassword, reset }

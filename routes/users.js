@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { register, login, sendEmail, checkCode, newPassword} = require('../controllers/users')
+const { register, login, sendEmail, checkCode, newPassword, reset} = require('../controllers/users')
 
 
 const router = express.Router()
@@ -279,7 +279,9 @@ router.post('/verifyCode/', checkCode)
  *                              err:
  *                                  type: string
  */
-router.patch('/newPassword/', newPassword)
+router.patch('/newPassword', newPassword)
+
+router.get('/reset/:id', reset)
 
 
 

@@ -1,4 +1,6 @@
 const User = require('../models/user')
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken')
 
 
 const changePassword = async (req, res) => {
@@ -33,7 +35,51 @@ const deleteAccount = async (req, res) => {
             newEmail="dltd."+user.email
             user.updateOne({reason:req.body.reason, email:newEmail, status:false})
             .then((result) => {
-                return res.status(200).json({ msg: 'Account has been successfully deleted' })
+                const reset = jwt.sign(
+                    { userId: user._id, },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '30m', }
+                )
+                console.log('reset:',reset);
+                console.log('email',user.email);
+                var transporter = nodemailer.createTransport({
+                    host: "smtp.gmail.com",
+                    port: 587,
+                    secure: false, // true for 587, false for other ports
+                    requireTLS: true,
+                    auth: {
+                        user: process.env.MY_EMAIL,
+                        pass: process.env.MY_PASSWORD
+                    }
+                });
+
+                var mailOptions = {
+                    from: process.env.MY_EMAIL,
+                    to: user.email,
+                    subject: 'Reset account for todo app',
+                    html: ` Your account has been temporarily deleted.<br>
+                    Click the link below to reactivate your account<br>
+                    This link will expire in 30 minutes and then your account will be permanently deleted.<br>
+                    <a href='https://too-doo-task.herokuapp.com/api/toodoo/auth/reset/${reset}'>Reactivate Account</a>
+                    
+                    <hr>
+                    If the link expires or the account deleted permanently<br>
+                    You can register again using the link below<br>
+                    <a href='https://tooo0doooo.netlify.app/'>Register</a>
+                    `
+                };
+
+                transporter.sendMail(mailOptions, async function (error, info) {
+                    if (error) {
+                        console.log(error);
+                        return res.status(400).json({ err:error.message })
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                        return res.status(200).json({ msg: 'Account has been successfully deleted' })
+                    }
+                });
+
+                
             })
             .catch((err) => {
                 console.log(err.message)
