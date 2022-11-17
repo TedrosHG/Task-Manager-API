@@ -224,6 +224,7 @@ const newPassword = async (req, res) => {
 }
 
 const reset = async (req, res) => {
+    console.log('reset');
     try{
     const payload = jwt.verify(req.params.id, process.env.JWT_SECRET)
     console.log(payload);
@@ -235,7 +236,7 @@ const reset = async (req, res) => {
             if(user.email.startsWith("dltd.")){
                 await user.updateOne({ status:true, email:user.email.slice(5) })
                 .then(async (result) => {
-                    
+                    console.log('reset',result);
                     var transporter = nodemailer.createTransport({
                         host: "smtp.gmail.com",
                         port: 587,
