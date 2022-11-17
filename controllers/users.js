@@ -252,7 +252,7 @@ const reset = async (req, res) => {
                         to: result.email,
                         subject: 'Account has been successfully reactivated',
                         html: `
-                        Your account has been successfully reactivated.<br> 
+                        Your account has been successfully reactivated.<br 
                         You can sign in using the link below <br>
                         <a href='https://tooo0doooo.netlify.app/'>Register</a>
                         `
