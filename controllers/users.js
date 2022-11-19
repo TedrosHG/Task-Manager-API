@@ -234,7 +234,7 @@ const reset = async (req, res) => {
                 return res.json({err:'No user with id'})
             }else{
                 await User.findOne({email:user.email.slice(5), status:true})
-                .then((result) => {
+                .then(async (result) => {
                     if(result){
                         return res.redirect('https://mytoodoo.netlify.app/register');
                     }else{
