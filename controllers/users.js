@@ -258,8 +258,8 @@ const reset = async (req, res) => {
                                     to: user.email.slice(5),
                                     subject: 'Account has been successfully reactivated',
                                     html: `
-                                    Your account has been successfully reactivated.<br 
-                                    You can sign in using the link below <br>,<hr>
+                                    Your account has been successfully reactivated.<br> 
+                                    You can sign in using the link below <br><hr>
                                     <a href='https://mytoodoo.netlify.app'>Login</a>
                                     `
                                 };
