@@ -40,8 +40,7 @@ const deleteAccount = async (req, res) => {
                     process.env.JWT_SECRET,
                     { expiresIn: '30m', }
                 )
-                console.log('reset:',reset);
-                console.log('email',user.email);
+                
                 var transporter = nodemailer.createTransport({
                     host: "smtp.gmail.com",
                     port: 587,
@@ -65,7 +64,7 @@ const deleteAccount = async (req, res) => {
                     <hr>
                     If the link expires or the account deleted permanently<br>
                     You can register again using the link below<br>
-                    <a href='https://tooo0doooo.netlify.app/'>Register</a>
+                    <a href='https://mytoodoo.netlify.app/register'>Register</a>
                     `
                 };
 

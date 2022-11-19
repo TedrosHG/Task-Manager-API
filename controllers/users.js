@@ -233,52 +233,63 @@ const reset = async (req, res) => {
             if(!user){
                 return res.json({err:'No user with id'})
             }else{
-            if(user.email.startsWith("dltd.")){
-                await user.updateOne({ status:true, email:user.email.slice(5) })
-                .then(async (result) => {
-                    console.log('reset',result);
-                    var transporter = nodemailer.createTransport({
-                        host: "smtp.gmail.com",
-                        port: 587,
-                        secure: false, // true for 587, false for other ports
-                        requireTLS: true,
-                        auth: {
-                            user: process.env.MY_EMAIL,
-                            pass: process.env.MY_PASSWORD
+                await User.findOne({email:user.email.slice(5), status:true})
+                .then((result) => {
+                    if(result){
+                        return res.redirect('https://mytoodoo.netlify.app/register');
+                    }else{
+                        if(user.email.startsWith("dltd.")){
+                            await user.updateOne({ status:true, email:user.email.slice(5), reason:'' })
+                            .then(async (result) => {
+                                console.log('reset',result);
+                                var transporter = nodemailer.createTransport({
+                                    host: "smtp.gmail.com",
+                                    port: 587,
+                                    secure: false, // true for 587, false for other ports
+                                    requireTLS: true,
+                                    auth: {
+                                        user: process.env.MY_EMAIL,
+                                        pass: process.env.MY_PASSWORD
+                                    }
+                                });
+                
+                                var mailOptions = {
+                                    from: process.env.MY_EMAIL,
+                                    to: user.email.slice(5),
+                                    subject: 'Account has been successfully reactivated',
+                                    html: `
+                                    Your account has been successfully reactivated.<br 
+                                    You can sign in using the link below <br>,<hr>
+                                    <a href='https://mytoodoo.netlify.app'>Login</a>
+                                    `
+                                };
+                
+                                transporter.sendMail(mailOptions, async function (error, info) {
+                                    if (error) {
+                                        console.log(error);
+                                        return res.status(400).json({ err:error.message })
+                                    } else {
+                                        console.log('Email sent: ' + info.response);
+                                        return res.redirect('https://mytoodoo.netlify.app');
+                                    }
+                                });
+                
+                            })
+                            .catch((err) => {
+                                console.log(err.message)
+                                return res.status(400).json({ err: err.message })
+                            })
+                        }else{
+                            //return res.json({err:'the account has been reactivated'})
+                            res.redirect('https://mytoodoo.netlify.app');
+                            
                         }
-                    });
-    
-                    var mailOptions = {
-                        from: process.env.MY_EMAIL,
-                        to: user.email.slice(5),
-                        subject: 'Account has been successfully reactivated',
-                        html: `
-                        Your account has been successfully reactivated.<br 
-                        You can sign in using the link below <br>,<hr>
-                        <a href='https://tooo0doooo.netlify.app/'>Login</a>
-                        `
-                    };
-    
-                    transporter.sendMail(mailOptions, async function (error, info) {
-                        if (error) {
-                            console.log(error);
-                            return res.status(400).json({ err:error.message })
-                        } else {
-                            console.log('Email sent: ' + info.response);
-                            return res.redirect('https://tooo0doooo.netlify.app/');
-                        }
-                    });
-    
+                    }
                 })
                 .catch((err) => {
-                    console.log(err.message)
-                    return res.status(400).json({ err: err.message })
+                    return res.status(401).json({err: err.message})
                 })
-            }else{
-                //return res.json({err:'the account has been reactivated'})
-                res.redirect('https://tooo0doooo.netlify.app/');
-                
-            }
+            
             
             }
         })
@@ -289,7 +300,7 @@ const reset = async (req, res) => {
     
     }catch (error) {
         //return res.status(401).json({err: "token expired"})
-        return res.redirect('https://tooo0doooo.netlify.app/register');
+        return res.redirect('https://mytoodoo.netlify.app/register');
         
     }
 }
