@@ -34,7 +34,7 @@ const options = {
         },
         servers: [
             {
-                url: "https://too-doo-task.herokuapp.com/api/TooDoo"
+                url: process.env.URL+"/api/TooDoo"
             }
         ],        
     },
@@ -73,6 +73,7 @@ app.get('/', (req, res) => {
         <p>To access swagger documentation go to <a href='/api-docs'>api-docs</a>`)
 });
 
+app.get('/api/TooDoo/refreshStatus', statusSchedule);
 
 
 

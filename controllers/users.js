@@ -236,7 +236,7 @@ const reset = async (req, res) => {
                 await User.findOne({email:user.email.slice(5), status:true})
                 .then(async (result) => {
                     if(result){
-                        return res.redirect('https://mytoodoo.netlify.app/register');
+                        return res.redirect(process.env.URL_Front_End,'/register');
                     }else{
                         if(user.email.startsWith("dltd.")){
                             await user.updateOne({ status:true, email:user.email.slice(5), reason:'' })
@@ -260,7 +260,7 @@ const reset = async (req, res) => {
                                     html: `
                                     Your account has been successfully reactivated.<br> 
                                     You can sign in using the link below <br><hr>
-                                    <a href='https://mytoodoo.netlify.app'>Login</a>
+                                    <a href='${process.env.URL_Front_End}'>Login</a>
                                     `
                                 };
                 
@@ -270,7 +270,7 @@ const reset = async (req, res) => {
                                         return res.status(400).json({ err:error.message })
                                     } else {
                                         console.log('Email sent: ' + info.response);
-                                        return res.redirect('https://mytoodoo.netlify.app');
+                                        return res.redirect(process.env.URL_Front_End);
                                     }
                                 });
                 
@@ -281,7 +281,7 @@ const reset = async (req, res) => {
                             })
                         }else{
                             //return res.json({err:'the account has been reactivated'})
-                            res.redirect('https://mytoodoo.netlify.app');
+                            res.redirect(process.env.URL_Front_End);
                             
                         }
                     }
@@ -300,7 +300,7 @@ const reset = async (req, res) => {
     
     }catch (error) {
         //return res.status(401).json({err: "token expired"})
-        return res.redirect('https://mytoodoo.netlify.app/register');
+        return res.redirect(process.env.URL,'/register');
         
     }
 }

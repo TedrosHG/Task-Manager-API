@@ -59,12 +59,12 @@ const deleteAccount = async (req, res) => {
                     html: ` Your account has been temporarily deleted.<br>
                     Click the link below to reactivate your account<br>
                     This link will expire in 30 minutes and then your account will be permanently deleted.<br>
-                    <a href='https://too-doo-task.herokuapp.com/api/toodoo/auth/reset/${reset}'>Reactivate Account</a>
+                    <a href='${process.env.URL}/api/toodoo/auth/reset/${reset}'>Reactivate Account</a>
                     
                     <hr>
                     If the link expires or the account deleted permanently<br>
                     You can register again using the link below<br>
-                    <a href='https://mytoodoo.netlify.app/register'>Register</a>
+                    <a href='${process.env.URL_Front_End}/register'>Register</a>
                     `
                 };
 
@@ -104,7 +104,7 @@ const getProfile = async (req, res) => {
                 phoneNumber:user.phoneNumber, 
                 gender:user.gender, 
                 DoB:user.DoB, 
-                img:user.img == "" ? "":`https://too-doo-task.herokuapp.com/profileImage/${user.img}` 
+                img:user.img == "" ? "":`${process.env.URL}/profileImage/${user.img}` 
             })
              }
     })

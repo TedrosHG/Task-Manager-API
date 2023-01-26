@@ -16,7 +16,7 @@ const auth = async (req, res, next) => {
         .then((result) => {
             if(result.email.startsWith('dltd.')){
                 //return res.status(401).json({err: "Authentication Failed, No account"})
-                return res.redirect('https://mytoodoo.netlify.app');
+                return res.redirect(process.env.URL_Front_End);
             }else{
                 // attach user id inorder to be used by other routes
                 req.user = { userId: payload.userId}
